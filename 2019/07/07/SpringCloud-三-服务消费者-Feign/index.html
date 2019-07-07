@@ -8,7 +8,7 @@
   <meta name="description" content>
   <meta name="author" content="Mr Wang">
   <!-- Open Graph Data -->
-  <meta property="og:title" content="Spring Cloud(二)服务消费者(restTemplate+ribbon)">
+  <meta property="og:title" content="SpringCloud(三)服务消费者(Feign)">
   <meta property="og:description" content>
   <meta property="og:site_name" content="春风不及你的美🐷">
   <meta property="og:type" content="article">
@@ -43,7 +43,7 @@
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         <div class="page-title with-background-image">
-          <p class="title">Spring Cloud(二)服务消费者(restTemplate+ribbon)</p>
+          <p class="title">SpringCloud(三)服务消费者(Feign)</p>
           <p class="subtitle"></p>
         </div>
         <div class="site-menu with-background-image">
@@ -108,72 +108,72 @@
         
         <!-- Post Main Content -->
         <div class="post-content">
-          <p>在微服务架构中，业务都会被拆分成一个独立的服务，服务与服务的通讯是基于http restful的。<br>这篇实战一下ribbon+restTemplate进行通讯<br>ribbon用作负载均衡,比如现在有两个eureka-client,他们的端口不同,其他都相同,配置如下  </p>
-<pre><code>server:
-  port: 8880
+          <p>Feign是一个声明式的伪Http客户端，它使得写Http客户端变得更简单。使用Feign，只需要创建一个接口并注解。它具有可插拔的注解特性，可使用Feign 注解和JAX-RS注解。Feign支持可插拔的编码器和解码器。Feign默认集成了Ribbon，并和Eureka结合，默认实现了负载均衡的效果。<br>1.Feign 采用的是基于接口的注解<br>2.Feign 整合了ribbon，具有负载均衡的能力<br>3.整合了Hystrix，具有熔断的能力<br>创建一个feign服务<br>pom.xml  </p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+    xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;parent&gt;
+        &lt;artifactId&gt;SpringCloud&lt;/artifactId&gt;
+        &lt;groupId&gt;com.springcloud.cn&lt;/groupId&gt;
+        &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+    &lt;/parent&gt;
+    &lt;groupId&gt;com.feign.cn&lt;/groupId&gt;
+    &lt;artifactId&gt;demo&lt;/artifactId&gt;
+    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+    &lt;name&gt;demo&lt;/name&gt;
+    &lt;description&gt;Demo project for Spring Boot&lt;/description&gt;
+    &lt;packaging&gt;jar&lt;/packaging&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-starter-netflix-eureka-client&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-starter-openfeign&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
 
-spring:
-  application:
-    name: eureka-client
-
-eureka:
+&lt;/project&gt;</code></pre><p>application.yml配置  </p>
+<pre><code>eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/  </code></pre><pre><code>server:
-  port: 8881
-
+      defaultZone: http://localhost:8761/eureka/
+server:
+  port: 8765
 spring:
   application:
-    name: eureka-client
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/</code></pre><p>都是在eureka-server 端口为8761上注册,如图:<br><img src="/img/11.png" alt="如图"><br>配置一个ribbon-client做负载均衡,配置如下  </p>
-<pre><code>server:
-  port: 8883
-
-spring:
-  application:
-    name: ribbon-client
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka/</code></pre><p>向程序注入一个bean: restTemplate,并通过@LoadBalanced注解表明这个restRemplate开启负载均衡的功能。  </p>
-<pre><code>@EnableEurekaClient
-@SpringBootApplication
-public class RibbonApplication {
+    name: service-feign</code></pre><p>在程序的启动类ServiceFeignApplication ，加上@EnableFeignClients注解开启Feign的功能：  </p>
+<pre><code>@SpringBootApplication
+@EnableEurekaClient
+@EnableFeignClients
+public class ServiceFeignApplication {
 
     public static void main(String[] args) {
-
-        SpringApplication.run(RibbonApplication.class, args);
+        SpringApplication.run( ServiceFeignApplication.class, args );
     }
+}</code></pre><p>定义一个feign接口，通过@ FeignClient（“服务名”），来指定调用哪个服务。比如在代码中调用了eureka-client服务的“/hi”接口，代码如下：  </p>
+<pre><code>//需要调用服务的服务名
+@FeignClient(value = &quot;eureka-client&quot;)
+public interface EurekaClientHi {
+    @RequestMapping(&quot;/hi&quot;)
+    String sayHiFromEurekaClient();
 
-    @Bean
-    @LoadBalanced
-    RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
-}</code></pre><p>写一个测试类ribbonController,如下  </p>
+}</code></pre><p>在Web层的controller层，对外暴露一个”/hi”的API接口，通过上面定义的Feign客户端EurekaClientHi 来消费服务。代码如下：</p>
 <pre><code>@RestController
 @RequestMapping(&quot;/test&quot;)
-public class RibbonController {
+public class HelloController {
     @Resource
-    RestTemplate restTemplate;
+    EurekaClientHi eurekaClientHi;
 
-    @RequestMapping(&quot;/ribbon&quot;)
-    public String ribbonTest(){
-
-        return restTemplate.getForObject(&quot;http://EUREKA-CLIENT/hi&quot;,String.class);
+    @RequestMapping(&quot;/demo&quot;)
+    public String hello(){
+        String s = eurekaClientHi.sayHiFromEurekaClient();
+        System.out.println(s);
+        return s;
     }
-
-}
-</code></pre><p>结果如下:<br><img src="/img/12.png" alt="如图"><br>交替轮询,说明ribbon做了负载均衡  </p>
-<hr>
-<hr>
-<p>想要一个项目启多个实例,如下<br><img src="/img/13.png" alt="如图"><br>把Single instance only勾取掉,然后端口号写上就行了</p>
+}</code></pre><p>结果如下<br><img src="/img/14.png" alt="如图"><br> 说明feign也做了负载均衡,也能进行服务间通讯</p>
 
         </div>
       </div>
