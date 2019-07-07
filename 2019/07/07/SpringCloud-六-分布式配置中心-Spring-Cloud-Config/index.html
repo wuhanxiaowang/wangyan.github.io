@@ -8,7 +8,7 @@
   <meta name="description" content>
   <meta name="author" content="Mr Wang">
   <!-- Open Graph Data -->
-  <meta property="og:title" content="SpringCloud 新建父子项目">
+  <meta property="og:title" content="SpringCloud(六)分布式配置中心(Spring Cloud Config)">
   <meta property="og:description" content>
   <meta property="og:site_name" content="春风不及你的美🐷">
   <meta property="og:type" content="article">
@@ -43,7 +43,7 @@
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         <div class="page-title with-background-image">
-          <p class="title">SpringCloud 新建父子项目</p>
+          <p class="title">SpringCloud(六)分布式配置中心(Spring Cloud Config)</p>
           <p class="subtitle"></p>
         </div>
         <div class="site-menu with-background-image">
@@ -108,22 +108,17 @@
         
         <!-- Post Main Content -->
         <div class="post-content">
-          <p>准备把SpringCloud实战一把,所以先建立父子工程,后面工程都是在一个父工程下面.START<br>首先打开idea<br><strong>File-New-Project</strong><br><img src="/img/3.png" alt="如图">  </p>
-<p>选择Maven工程,不要勾选骨架.创建一个简单的maven工程,然后把src目录删除,如下  </p>
-<p><img src="/img/4.png" alt="如图"> </p>
-<p>然后在父工程的pom,加一些公共依赖,如下  </p>
+          <p>在分布式系统中，由于服务数量巨多，为了方便服务配置文件统一管理，实时更新，所以需要分布式配置中心组件。在Spring Cloud中，有分布式配置中心组件spring cloud config ，它支持配置服务放在配置服务的内存中（即本地），也支持放在远程Git仓库中。在spring cloud config 组件中，分两个角色，一是config server，二是config client。<br>创建父工程,pom.xml如下  </p>
 <pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
          xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
          xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
     &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
 
-    &lt;groupId&gt;com.springcloud.cn&lt;/groupId&gt;
-    &lt;artifactId&gt;springcloud&lt;/artifactId&gt;
+    &lt;groupId&gt;com.config.cn&lt;/groupId&gt;
+    &lt;artifactId&gt;serviceconfig&lt;/artifactId&gt;
     &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
     &lt;packaging&gt;pom&lt;/packaging&gt;
-
-    &lt;modules&gt;&lt;/modules&gt;
 
     &lt;parent&gt;
         &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
@@ -131,6 +126,8 @@
         &lt;version&gt;2.0.3.RELEASE&lt;/version&gt;
         &lt;relativePath/&gt;
     &lt;/parent&gt;
+
+
     &lt;properties&gt;
         &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
         &lt;project.reporting.outputEncoding&gt;UTF-8&lt;/project.reporting.outputEncoding&gt;
@@ -143,10 +140,6 @@
             &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
             &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
             &lt;scope&gt;test&lt;/scope&gt;
-        &lt;/dependency&gt;
-        &lt;dependency&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
         &lt;/dependency&gt;
     &lt;/dependencies&gt;
 
@@ -172,64 +165,109 @@
     &lt;/build&gt;
 
 
-&lt;/project&gt;</code></pre><p>接下来创建一个eureka-server和eureka-client<br>项目,右键<strong>New-Module</strong>,选择Spring initializr,如下<br><img src="/img/5.png" alt="如图"><br>然后next<br><img src="/img/6.png" alt="如图"><br><img src="/img/7.png" alt="如图"><br><img src="/img/8.png" alt="如图"><br>把eureka-server里面没用的目录删掉,然后修改一下pom文件,修改如下</p>
+&lt;/project&gt;</code></pre><p>创建子工程<br>config-server,其pom.xml如下:  </p>
 <pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+    xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
     &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
     &lt;parent&gt;
-        &lt;groupId&gt;com.springcloud.cn&lt;/groupId&gt;
-        &lt;artifactId&gt;springcloud&lt;/artifactId&gt;
+        &lt;groupId&gt;com.config.cn&lt;/groupId&gt;
+        &lt;artifactId&gt;serviceconfig&lt;/artifactId&gt;
         &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
     &lt;/parent&gt;
-    &lt;groupId&gt;com.eureka.server&lt;/groupId&gt;
+    &lt;groupId&gt;com.config.server&lt;/groupId&gt;
     &lt;artifactId&gt;demo&lt;/artifactId&gt;
     &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
     &lt;name&gt;demo&lt;/name&gt;
     &lt;description&gt;Demo project for Spring Boot&lt;/description&gt;
     &lt;packaging&gt;jar&lt;/packaging&gt;
+
+
     &lt;dependencies&gt;
         &lt;dependency&gt;
             &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-cloud-starter-netflix-eureka-server&lt;/artifactId&gt;
+            &lt;artifactId&gt;spring-cloud-config-server&lt;/artifactId&gt;
         &lt;/dependency&gt;
     &lt;/dependencies&gt;
-&lt;/project&gt;
 
-</code></pre><p>就是把parent换成父工程就行了,然后就可以继承父工程里面一些公共依赖,然后在父工程里面把这个子工程加进去,这个子工程就搭建完成了.  </p>
-<pre><code>&lt;modules&gt;
-       &lt;module&gt;eureka-server&lt;/module&gt;
-   &lt;/modules&gt;
-</code></pre><hr>
-<p>eureka-client一样,就是把server换成client(勾选时),如下<br><img src="/img/9.png" alt="如图"></p>
-<p>修改一下pom  </p>
+&lt;/project&gt;
+</code></pre><p>在程序的入口Application类加上@EnableConfigServer注解开启配置服务器的功能，代码如下：  </p>
+<pre><code>@SpringBootApplication
+@EnableConfigServer
+public class DemoApplication {
+
+    public static void main(String[] args) {
+
+        SpringApplication.run(DemoApplication.class, args);
+    }
+
+}</code></pre><p>需要在程序的配置文件application.properties文件配置以下：  </p>
+<pre><code>pring.application.name=config-server
+server.port=8888
+
+#配置git仓库地址
+spring.cloud.config.server.git.uri=https://github.com/forezp/SpringcloudConfig/
+#配置仓库路径
+spring.cloud.config.server.git.searchPaths=respo
+#配置仓库的分支
+spring.cloud.config.label=master
+#访问git仓库的用户名
+spring.cloud.config.server.git.username=
+#访问git仓库的用户密码
+spring.cloud.config.server.git.password=
+</code></pre><p>如果Git仓库为公开仓库，可以不填写用户名和密码，如果是私有仓库需要填写<br>证明配置服务中心可以从远程程序获取配置信息。</p>
+<p>http请求地址和资源文件映射如下:</p>
+<p>/{application}/{profile}[/{label}]<br>/{application}-{profile}.yml<br>/{label}/{application}-{profile}.yml<br>/{application}-{profile}.properties<br>/{label}/{application}-{profile}.properties</p>
+<hr>
+<p>构建一个config client<br>其pom文件：  </p>
 <pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 &lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
-         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+    xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
     &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
     &lt;parent&gt;
-        &lt;groupId&gt;com.springcloud.cn&lt;/groupId&gt;
-        &lt;artifactId&gt;springcloud&lt;/artifactId&gt;
+        &lt;groupId&gt;com.config.cn&lt;/groupId&gt;
+        &lt;artifactId&gt;serviceconfig&lt;/artifactId&gt;
         &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
     &lt;/parent&gt;
-    &lt;groupId&gt;com.eureka.client&lt;/groupId&gt;
+    &lt;groupId&gt;com.config.client&lt;/groupId&gt;
     &lt;artifactId&gt;demo&lt;/artifactId&gt;
     &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
     &lt;name&gt;demo&lt;/name&gt;
     &lt;description&gt;Demo project for Spring Boot&lt;/description&gt;
     &lt;packaging&gt;jar&lt;/packaging&gt;
+
     &lt;dependencies&gt;
         &lt;dependency&gt;
             &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-cloud-starter-netflix-eureka-client&lt;/artifactId&gt;
+            &lt;artifactId&gt;spring-cloud-starter-config&lt;/artifactId&gt;
         &lt;/dependency&gt;
     &lt;/dependencies&gt;
 
 &lt;/project&gt;
-</code></pre><p>在父模块中,把子工程加进去,就搭建完成了.</p>
-<pre><code>&lt;modules&gt;       
-       &lt;module&gt;eureka-client&lt;/module&gt;
-   &lt;/modules&gt;</code></pre><p>这样两个子模块就创建完成了.<br><img src="/img/10.png" alt="如图"></p>
+</code></pre><p>其配置文件application.properties：  </p>
+<pre><code>spring.application.name=config-client
+# 指明远程仓库的分支
+spring.cloud.config.label=master
+#dev开发环境配置文件 test测试环境 pro正式环境
+spring.cloud.config.profile=dev
+#指明配置服务中心的网址。
+spring.cloud.config.uri= http://localhost:8888/
+server.port=8881</code></pre><p>程序的入口类，写一个API接口“／hi”，返回从配置中心读取的foo变量的值，代码如下：  </p>
+<pre><code>@SpringBootApplication
+@RestController
+public class ConfigClientApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ConfigClientApplication.class, args);
+    }
+
+    @Value(&quot;${foo}&quot;)
+    String foo;
+    @RequestMapping(value = &quot;/hi&quot;)
+    public String hi(){
+        return foo;
+    }
+}</code></pre><p><img src="/img/16.png" alt="如图"> </p>
 
         </div>
       </div>

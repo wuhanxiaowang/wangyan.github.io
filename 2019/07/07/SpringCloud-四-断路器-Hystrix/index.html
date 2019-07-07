@@ -8,7 +8,7 @@
   <meta name="description" content>
   <meta name="author" content="Mr Wang">
   <!-- Open Graph Data -->
-  <meta property="og:title" content="为什么写博客？">
+  <meta property="og:title" content="SpringCloud(四)断路器(Hystrix)">
   <meta property="og:description" content>
   <meta property="og:site_name" content="春风不及你的美🐷">
   <meta property="og:type" content="article">
@@ -43,7 +43,7 @@
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         <div class="page-title with-background-image">
-          <p class="title">为什么写博客？</p>
+          <p class="title">SpringCloud(四)断路器(Hystrix)</p>
           <p class="subtitle"></p>
         </div>
         <div class="site-menu with-background-image">
@@ -99,24 +99,74 @@
           
           <!-- Date -->
           <span class="date-time info">On
-            <span class="date">2019-07-06</span>
+            <span class="date">2019-07-07</span>
             <span class="time">21:14:14</span>
           </span>
           
         </div>
         <!-- Tags -->
         
-          <div class="post-tags text-muted">
-            Tags: 
-
-<a class="tag" href="/tags/java/">#java</a>
-
-
-          </div>
-        
         <!-- Post Main Content -->
         <div class="post-content">
-          <p>第一次写自己的博客有点兴奋,为什么突然想写博客了?因为做程序员这行时间也不短了,一些技术都见过用过,但是没有好好去理解精髓,感觉需要沉淀一下.<br>之前看过一本书,说如果把一件事情说给不懂的人听,他能听明白,说明你就学会了.所有,我想用最简单的大白话,能把一些技术解释清楚,同时也能锻炼自己的<br>表达能力,so just start. </p>
+          <p>在微服务架构中，根据业务来拆分成一个个的服务，服务与服务之间可以相互调用（RPC），在Spring Cloud可以用RestTemplate+Ribbon和Feign来调用。为了保证其高可用，单个服务通常会集群部署。由于网络原因或者自身的原因，服务并不能保证100%可用，如果单个服务出现问题，调用这个服务就会出现线程阻塞，此时若有大量的请求涌入，Servlet容器的线程资源会被消耗完毕，导致服务瘫痪。服务与服务之间的依赖性，故障会传播，会对整个微服务系统造成灾难性的严重后果，这就是服务故障的“雪崩”效应。<br>在ribbon使用断路器，<br>改造ribbon-client 工程的代码，首先在pox.xml文件中加入spring-cloud-starter-netflix-hystrix的起步依赖：  </p>
+<pre><code>&lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-cloud-starter-netflix-hystrix&lt;/artifactId&gt;
+  &lt;/dependency&gt;</code></pre><p>在程序的启动类RibbonApplication 加@EnableHystrix注解开启Hystrix：  </p>
+<pre><code>@EnableEurekaClient
+@SpringBootApplication
+@EnableHystrix
+public class RibbonApplication {
+
+    public static void main(String[] args) {
+
+        SpringApplication.run(RibbonApplication.class, args);
+    }
+
+    @Bean
+    @LoadBalanced
+    RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+}</code></pre><p>改造调用方法  </p>
+<pre><code>@RestController
+@RequestMapping(&quot;/test&quot;)
+public class RibbonController {
+    @Resource
+    RestTemplate restTemplate;
+
+    @RequestMapping(&quot;/ribbon&quot;)
+    @HystrixCommand(fallbackMethod = &quot;hiError&quot;)
+    public String ribbonTest(){
+        String forObject = restTemplate.getForObject(&quot;http://EUREKA-CLIENT/hi&quot;, String.class);
+        System.out.println(forObject);
+        return &quot;ok&quot;;
+    }
+
+    public String hiError() {
+        return &quot;hi&quot;+&quot;sorry,error!&quot;;
+    }
+
+}</code></pre><p>当服务eureka-client挂了,会立马掉hiError方法,不会阻塞  </p>
+<hr>
+<p>在feign中使用断路器<br>Feign是自带断路器的，在D版本的Spring Cloud之后，它没有默认打开。需要在配置文件中配置打开它，在配置文件加以下代码：  </p>
+<pre><code>feign.hystrix.enabled=true</code></pre><p>基于service-feign工程进行改造，只需要在FeignClient的EurekaClientHi接口的注解中加上fallback的指定类就行了：  </p>
+<pre><code>
+//需要调用服务的服务名
+@FeignClient(value = &quot;eureka-client&quot;,fallback = HystricCallBack.class)
+public interface EurekaClientHi {
+    @RequestMapping(&quot;/hi&quot;)
+    String sayHiFromEurekaClient();
+
+}</code></pre><p>HystricCallBack需要实现EurekaClientHi 接口，并注入到Ioc容器中，代码如下：  </p>
+<pre><code>@Component
+public class HystricCallBack implements EurekaClientHi{
+    @Override
+    public String sayHiFromEurekaClient() {
+        return &quot;sorry,is error&quot;;
+    }
+}</code></pre><p><img src="/img/14.png" alt="如图"> </p>
 
         </div>
       </div>
