@@ -100,7 +100,7 @@
           <!-- Date -->
           <span class="date-time info">On
             <span class="date">2019-07-07</span>
-            <span class="time">17:56:40</span>
+            <span class="time">19:12:35</span>
           </span>
           
         </div>
@@ -108,7 +108,72 @@
         
         <!-- Post Main Content -->
         <div class="post-content">
-          <p>在微服务架构中，业务都会被拆分成一个独立的服务，服务与服务的通讯是基于http restful的。<br>这篇实战一下ribbon+restTemplate进行通讯  </p>
+          <p>在微服务架构中，业务都会被拆分成一个独立的服务，服务与服务的通讯是基于http restful的。<br>这篇实战一下ribbon+restTemplate进行通讯<br>ribbon用作负载均衡,比如现在有两个eureka-client,他们的端口不同,其他都相同,配置如下  </p>
+<pre><code>server:
+  port: 8880
+
+spring:
+  application:
+    name: eureka-client
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/  </code></pre><pre><code>server:
+  port: 8881
+
+spring:
+  application:
+    name: eureka-client
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/</code></pre><p>都是在eureka-server 端口为8761上注册,如图:<br><img src="/img/11.png" alt="如图"><br>配置一个ribbon-client做负载均衡,配置如下  </p>
+<pre><code>server:
+  port: 8883
+
+spring:
+  application:
+    name: ribbon-client
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/</code></pre><p>向程序注入一个bean: restTemplate,并通过@LoadBalanced注解表明这个restRemplate开启负载均衡的功能。  </p>
+<pre><code>@EnableEurekaClient
+@SpringBootApplication
+public class RibbonApplication {
+
+    public static void main(String[] args) {
+
+        SpringApplication.run(RibbonApplication.class, args);
+    }
+
+    @Bean
+    @LoadBalanced
+    RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+}</code></pre><p>写一个测试类ribbonController,如下  </p>
+<pre><code>@RestController
+@RequestMapping(&quot;/test&quot;)
+public class RibbonController {
+    @Resource
+    RestTemplate restTemplate;
+
+    @RequestMapping(&quot;/ribbon&quot;)
+    public String ribbonTest(){
+
+        return restTemplate.getForObject(&quot;http://EUREKA-CLIENT/hi&quot;,String.class);
+    }
+
+}
+</code></pre><p>结果如下:<br><img src="/img/12.png" alt="如图"><br>交替轮询,说明ribbon做了负载均衡  </p>
+<hr>
+<hr>
+<p>想要一个项目启多个实例,如下<br><img src="/img/13.png" alt="如图"><br>把Single instance only勾取掉,然后端口号写上就行了</p>
 
         </div>
       </div>
