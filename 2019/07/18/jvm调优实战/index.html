@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+  <!-- Html Head Tag-->
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content>
+  <meta name="author" content="Mr Wang">
+  <!-- Open Graph Data -->
+  <meta property="og:title" content="jvm调优实战">
+  <meta property="og:description" content>
+  <meta property="og:site_name" content="春风不及你的美🐷">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="http://yoursite.com">
+  
+    <link rel="alternate" href="/atom.xml" title="春风不及你的美🐷" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+
+  <!-- Site Title -->
+  <title>春风不及你的美🐷</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <!-- Custom CSS -->
+  
+  <link rel="stylesheet" href="/css/style.light.css">
+
+  <!-- Google Analytics -->
+  
+
+</head>
+
+  <body>
+    <!-- Page Header -->
+
+
+<header class="site-header header-background" style="background-image: url(/img/default-banner-dark.jpg)">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="page-title with-background-image">
+          <p class="title">jvm调优实战</p>
+          <p class="subtitle"></p>
+        </div>
+        <div class="site-menu with-background-image">
+          <ul>
+            
+              <li>
+                <a href="/">
+                  
+                  Home
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="/archives">
+                  
+                  Archives
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="https://github.com/<your-github-username>">
+                  
+                  Github
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="mailto:<your-email-address>">
+                  
+                  Email
+                  
+                </a>
+              </li>
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<article>
+  <div class="container typo">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-info text-muted">
+          
+            <!-- Author -->
+            <span class="author info">By Mr Wang</span>
+          
+          <!-- Date -->
+          <span class="date-time info">On
+            <span class="date">2019-07-18</span>
+            <span class="time">21:36:59</span>
+          </span>
+          
+        </div>
+        <!-- Tags -->
+        
+        <!-- Post Main Content -->
+        <div class="post-content">
+          <p>jvm一些常用指令jps,jstat,jmap,jstack,jinfo  </p>
+<h1 id="jps"><a href="#jps" class="headerlink" title="jps"></a>jps</h1><p>查看正在运行的java程序<br><img src="/img/17.png" alt="如图">    </p>
+<hr>
+<h1 id="jstat"><a href="#jstat" class="headerlink" title="jstat"></a>jstat</h1><p>是用于监视虚拟机运行时状态信息的命令，它可以显示出虚拟机进程中的类装载、内存、垃圾收集、JIT编译等运行数据。<br>命令格式<br>jstat [option] LVMID [interval] [count]  </p>
+<ul>
+<li>[option] : 操作参数</li>
+<li>LVMID : 本地虚拟机进程ID</li>
+<li>[interval] : 连续输出的时间间隔</li>
+<li>[count] : 连续输出的次数  </li>
+</ul>
+<p><strong>option 参数</strong>  </p>
+<ul>
+<li>-class    class loader的行为统计  </li>
+<li>-compiler HotSpt JIT编译器行为统计  </li>
+<li>-gc    垃圾回收堆的行为统计  </li>
+</ul>
+<p><strong>-class</strong><br><img src="/img/18.png" alt="如图">  </p>
+<ul>
+<li>Loaded : 加载class的数量  </li>
+<li>Bytes : class字节大小  </li>
+<li>Unloaded : 未加载class的数量  </li>
+<li>Bytes : 未加载class的字节大小  </li>
+<li>Time : 加载时间  </li>
+</ul>
+<p><strong>-compiler</strong><br><img src="/img/19.png" alt="如图">  </p>
+<ul>
+<li>Compiled : 编译数量  </li>
+<li>Failed : 编译失败数量  </li>
+<li>nvalid : 无效数量  </li>
+<li>Time : 编译耗时  </li>
+<li>FailedType : 失败类型  </li>
+<li>FailedMethod : 失败方法的全限定名  </li>
+</ul>
+<p><strong>-gc</strong><br><img src="/img/20.png" alt="如图"><br><strong>C即Capacity 总容量，U即Used 已使用的容量</strong><br>S0C : survivor0区的总容量<br>S1C : survivor1区的总容量<br>S0U : survivor0区已使用的容量<br>S1C : survivor1区已使用的容量<br>EC : Eden区的总容量<br>EU : Eden区已使用的容量<br>OC : Old区的总容量<br>OU : Old区已使用的容量<br>PC 当前perm的容量 (KB)<br>PU perm的使用 (KB)<br>YGC : 新生代垃圾回收次数<br>YGCT : 新生代垃圾回收时间<br>FGC : 老年代垃圾回收次数<br>FGCT : 老年代垃圾回收时间<br>GCT : 垃圾回收总消耗时间  </p>
+<hr>
+<h1 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h1><p>命令用于生成heap dump文件<br>命令格式<br>jmap [option] LVMID<br>option参数</p>
+<ul>
+<li>dump : 生成堆转储快照  </li>
+<li>finalizerinfo : 显示在F-Queue队列等待Finalizer线程执行finalizer方法的对象  </li>
+<li>heap : 显示Java堆详细信息  </li>
+<li>histo : 显示堆中对象的统计信息  </li>
+<li>permstat : to print permanent generation statistics  </li>
+<li>F:当-dump没有响应时，强制生成dump快照<br><img src="/img/23.png" alt="如图"><br>下载下来的文件,用MAT工具打开<br><img src="/img/24.png" alt="如图">  </li>
+</ul>
+<hr>
+<p>怀疑内存泄漏的地方<br><img src="/img/30.png" alt="如图">  </p>
+<hr>
+<p>对象<br><img src="/img/31.png" alt="如图">  </p>
+<p><strong>jmap -heap</strong><br><img src="/img/25.png" alt="如图">  </p>
+<hr>
+<h1 id="jinfo"><a href="#jinfo" class="headerlink" title="jinfo"></a>jinfo</h1><p>这个命令作用是实时查看和调整虚拟机运行参数。</p>
+<h2 id><a href="#" class="headerlink" title="  "></a><img src="/img/21.png" alt="如图">  </h2><h1 id="jstack"><a href="#jstack" class="headerlink" title="jstack"></a>jstack</h1><p>jstack用于生成java虚拟机当前时刻的线程快照。<br><img src="/img/22.png" alt="如图">  </p>
+<hr>
+<p>其实JDK自带图像化界面工具jvisualvm.exe<br><img src="/img/26.png" alt="如图">  </p>
+<hr>
+<p><img src="/img/27.png" alt="如图">  </p>
+<hr>
+<p><img src="/img/28.png" alt="如图">  </p>
+<hr>
+<p><img src="/img/29.png" alt="如图">  </p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+
+
+
+    <!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p class="copyright text-muted">
+          Theme By <a target="_blank" href="https://github.com/levblanc">Levblanc.</a>
+          Inspired By <a target="_blank" href="https://github.com/klugjo/hexo-theme-clean-blog">Clean Blog.</a>
+        <p class="copyright text-muted">
+          Powered By <a target="_blank" href="https://hexo.io/">Hexo.</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    <!-- After Footer Scripts -->
+<script src="/js/highlight.pack.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    var codeBlocks = Array.prototype.slice.call(document.getElementsByTagName('pre'))
+    codeBlocks.forEach(function(block, index) {
+      hljs.highlightBlock(block);
+    });
+  });
+</script>
+
+  </body>
+</html>
+
