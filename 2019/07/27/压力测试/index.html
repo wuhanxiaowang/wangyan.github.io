@@ -8,7 +8,7 @@
   <meta name="description" content>
   <meta name="author" content="Mr Wang">
   <!-- Open Graph Data -->
-  <meta property="og:title" content="SpringCloud(七)消息总线(Spring Cloud Bus)">
+  <meta property="og:title" content="压力测试工具">
   <meta property="og:description" content>
   <meta property="og:site_name" content="春风不及你的美🐷">
   <meta property="og:type" content="article">
@@ -43,7 +43,7 @@
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         <div class="page-title with-background-image">
-          <p class="title">SpringCloud(七)消息总线(Spring Cloud Bus)</p>
+          <p class="title">压力测试工具</p>
           <p class="subtitle"></p>
         </div>
         <div class="site-menu with-background-image">
@@ -99,7 +99,7 @@
           
           <!-- Date -->
           <span class="date-time info">On
-            <span class="date">2019-07-07</span>
+            <span class="date">2019-07-27</span>
             <span class="time">14:10:20</span>
           </span>
           
@@ -108,7 +108,18 @@
         
         <!-- Post Main Content -->
         <div class="post-content">
-          <p>Spring Cloud Bus 将分布式的节点用轻量的消息代理连接起来。它可以用于广播配置文件的更改或者服务之间的通讯，也可以用于监控。本文要讲述的是用Spring Cloud Bus实现通知微服务架构的配置文件的更改。  </p>
+          <p>压测工具一:<strong>Apache Bench(AB)</strong><br>在官网下载包<br><img src="/img/32.png" alt="如图"><br>然后cmd进入bin目录做如下操作<br>ab -n 1000 -c 50 “<a href="http://localhost:8888/demo/hello&quot;" target="_blank" rel="noopener">http://localhost:8888/demo/hello&quot;</a>  (abs测试https请求)<br><img src="/img/33.png" alt="如图">  </p>
+<p>ab -n 1000 -c 50 “<a href="http://localhost:8888/demo/hello?name=xiaowang&quot;" target="_blank" rel="noopener">http://localhost:8888/demo/hello?name=xiaowang&quot;</a><br><img src="/img/34.png" alt="如图">  </p>
+<p>ab -n 1000 -c 50 -p data.json -T “application/json” “<a href="http://localhost:8888/demo/hello&quot;（data.json和ab.exe放在一个目录下）" target="_blank" rel="noopener">http://localhost:8888/demo/hello&quot;（data.json和ab.exe放在一个目录下）</a><br><img src="/img/35.png" alt="如图">  </p>
+<p><strong>常用参数说明：</strong>  </p>
+<ul>
+<li>-n    请求的总数，默认是1次。  </li>
+<li>-c    并发数，同一时间请求数。  </li>
+<li>-p    如果后面接的是文件，表示POST请求，文件中包含请求数据，根据数据格式，设置-T参数。  </li>
+<li>-T    设置请求头中的Content-type（针对POST/PUT），比如：application/x-www-form-urlencoded。默认是text/plain。application/json  是json<br><img src="/img/36.png" alt="如图">  </li>
+</ul>
+<hr>
+<p>压测工具二:<strong>JMeter</strong><br><img src="/img/37.png" alt="如图"><br><img src="/img/38.png" alt="如图"><br><img src="/img/39.png" alt="如图"><br><img src="/img/40.png" alt="如图">  </p>
 
         </div>
       </div>

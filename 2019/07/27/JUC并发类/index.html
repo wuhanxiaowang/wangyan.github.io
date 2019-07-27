@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html>
+  <!-- Html Head Tag-->
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content>
+  <meta name="author" content="Mr Wang">
+  <!-- Open Graph Data -->
+  <meta property="og:title" content="J.U.C并发类">
+  <meta property="og:description" content>
+  <meta property="og:site_name" content="春风不及你的美🐷">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="http://yoursite.com">
+  
+    <link rel="alternate" href="/atom.xml" title="春风不及你的美🐷" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+
+  <!-- Site Title -->
+  <title>春风不及你的美🐷</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <!-- Custom CSS -->
+  
+  <link rel="stylesheet" href="/css/style.light.css">
+
+  <!-- Google Analytics -->
+  
+
+</head>
+
+  <body>
+    <!-- Page Header -->
+
+
+<header class="site-header header-background" style="background-image: url(/img/default-banner-dark.jpg)">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="page-title with-background-image">
+          <p class="title">J.U.C并发类</p>
+          <p class="subtitle"></p>
+        </div>
+        <div class="site-menu with-background-image">
+          <ul>
+            
+              <li>
+                <a href="/">
+                  
+                  Home
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="/archives">
+                  
+                  Archives
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="https://github.com/<your-github-username>">
+                  
+                  Github
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="mailto:<your-email-address>">
+                  
+                  Email
+                  
+                </a>
+              </li>
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<article>
+  <div class="container typo">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-info text-muted">
+          
+            <!-- Author -->
+            <span class="author info">By Mr Wang</span>
+          
+          <!-- Date -->
+          <span class="date-time info">On
+            <span class="date">2019-07-27</span>
+            <span class="time">14:10:20</span>
+          </span>
+          
+        </div>
+        <!-- Tags -->
+        
+        <!-- Post Main Content -->
+        <div class="post-content">
+          <p><strong>线程不安全的高并发实现</strong></p>
+<pre><code>package com.example.demo.util;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
+
+public class AtomicIntegerTest {
+    //客户端发起1000个请求
+    private static int CLIENT_COUNT = 1000;
+    //100个线程
+    private static int THREAD_COUNT = 100;
+    //每个线程执行,count就加1
+    private static int count = 0;
+    //创建线程池
+    private static ExecutorService executorService = Executors.newCachedThreadPool();
+    //每次只允许100个线程执行
+    private static Semaphore semaphore = new Semaphore(THREAD_COUNT);
+
+    private static CountDownLatch countDownLatch = new CountDownLatch(CLIENT_COUNT);
+
+    public static void main(String[] args) throws Exception {
+        for (int i = 0; i &lt; CLIENT_COUNT; i++) {
+            executorService.execute(() -&gt; {
+                try {
+                    //获得一个许可证
+                    semaphore.acquire();
+                    add();
+                    //释放许可证,如果不释放,后面900个任务不能执行
+                    semaphore.release();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //减一
+                countDownLatch.countDown();
+            });
+        }
+        //等所有线程做完
+        countDownLatch.await();
+        executorService.shutdown();
+        System.out.println(&quot;count数量&quot;+count);
+
+    }
+
+    public static void add() {
+        count++;
+    }
+}
+</code></pre><p>结果如下  </p>
+<pre><code>count数量995</code></pre><p>100个线程同时去做count++就会引发线程安全问题,看一下线程工作原理,JMM模型<br><img src="/img/41.png" alt="如图"><br>因为线程之间是不可见的，所以线程操作时不能保证自己的工作内存读取的值是最新的,所以引发上面问题  </p>
+<hr>
+<p><strong>线程安全的高并发实现 AtomicInteger</strong>  </p>
+<pre><code>package com.example.demo.util;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class AtomicIntegerTest {
+    //客户端发起1000个请求
+    private static int CLIENT_COUNT = 1000;
+    //100个线程
+    private static int THREAD_COUNT = 100;
+    //创建线程池
+    private static ExecutorService executorService = Executors.newCachedThreadPool();
+    //每次只允许100个线程执行
+    private static Semaphore semaphore = new Semaphore(THREAD_COUNT);
+
+    private static CountDownLatch countDownLatch = new CountDownLatch(CLIENT_COUNT);
+
+    private static AtomicInteger atomicInteger=new AtomicInteger(0);
+
+    public static void main(String[] args) throws Exception {
+        for (int i = 0; i &lt; CLIENT_COUNT; i++) {
+            executorService.execute(() -&gt; {
+                try {
+                    //获得一个许可证
+                    semaphore.acquire();
+                    add();
+                    //释放许可证,如果不释放,后面900个任务不能执行
+                    semaphore.release();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //减一
+                countDownLatch.countDown();
+            });
+        }
+        //等所有线程做完
+        countDownLatch.await();
+        executorService.shutdown();
+        System.out.println(&quot;count数量&quot;+atomicInteger);
+
+    }
+
+    public static void add() {
+        atomicInteger.incrementAndGet();
+    }
+}
+</code></pre><p><strong>AtomicInteger 保证原子性,采用的是CAS算法</strong><br>CAS是Compare and Swap 的意思，比较并操作.CAS是一种乐观锁技术,当多个线程去修改同一个变量时,  只有一个线程能更新成功,其余线程都失败,失败线程不会挂起,会不断尝试更新.<br>CAS的三个操作,内存值(V),预期值(A),新值(B),只有当内存值和预期值一致(V=A),才会更新为新值B<br>看源码  </p>
+<pre><code>/**
+     * Atomically sets the value to the given updated value
+     * if the current value {@code ==} the expected value.
+     *
+     * @param expect the expected value
+     * @param update the new value
+     * @return {@code true} if successful. False return indicates that
+     * the actual value was not equal to the expected value.
+     */
+    public final boolean compareAndSet(int expect, int update) {
+        return unsafe.compareAndSwapInt(this, valueOffset, expect, update);
+    }</code></pre><p>this表示当前对象,valueOffset表示当前线程工作内存的值,expect表示主内存的值,update表示要更新的值  </p>
+<hr>
+<p>原子更新基本类型的 AtomicInteger，只能更新一个变量，如果要原子更新多个变量，就需要使用这个原子更新引用类型提供的类<br><strong>AtomicReference</strong>：原子更新引用类型。<br><strong>AtomicReferenceFieldUpdater</strong>：原子更新引用类型里的字段。  </p>
+<p>如果需原子地更新某个类里的某个字段时，就需要使用原子更新字段类，Atomic 包提供了以下 3 个类进行原子字段更新。<br><strong>AtomicIntegerFieldUpdater</strong>：原子更新整型的字段的更新器。<br><strong>AtomicLongFieldUpdater</strong>：原子更新长整型字段的更新器。<br><strong>AtomicStampedReference</strong>：原子更新带有版本号的引用类型。该类将整数值与引用关联起来，可用于原子的更新数据和数据的版本号，可以解决使用 CAS 进行原子更新时可能出现的 ABA 问题。</p>
+<pre><code>package com.example.demo.entity;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+
+/**
+ * &lt;p&gt;
+ * 
+ * &lt;/p&gt;
+ *
+ * @author wy
+ * @since 2019-06-29
+ */
+@Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
+public class Userinfo implements Serializable {
+
+    private static final long serialVersionUID=1L;
+
+    @TableId(value = &quot;id&quot;, type = IdType.AUTO)
+    private Integer id;
+
+    private String name;
+
+    public volatile int age;//必须使用volatile标识,并且是非stati
+
+
+}</code></pre><pre><code>package com.example.demo.util;
+
+import com.example.demo.entity.Userinfo;
+
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+
+public class AtomicReferenceTest {
+
+    private static AtomicIntegerFieldUpdater&lt;Userinfo&gt; atomicIntegerFieldUpdater = AtomicIntegerFieldUpdater.newUpdater(Userinfo.class, &quot;age&quot;);
+
+    private static Userinfo userinfo;
+
+    public static void main(String[] args) {
+
+          userinfo=new Userinfo();
+          userinfo.setAge(12);
+
+          atomicIntegerFieldUpdater.incrementAndGet(userinfo);
+
+        System.out.println(&quot;更新后:&quot;+atomicIntegerFieldUpdater.get(userinfo));
+
+
+    }
+}
+</code></pre><pre><code>更新后:13
+</code></pre><hr>
+<p><strong>CountDownLatch 用法</strong><br>这个类用来控制线程等待，可以让某个线程等待直到倒计时结束，再开始执行。</p>
+<pre><code>package com.example.demo.util;
+
+import java.util.concurrent.CountDownLatch;
+
+public class CountDownLatchTest {
+
+    private static CountDownLatch countDownLatch = new CountDownLatch(2);
+
+    public static void main(String[] args)throws Exception{
+        new Thread(() -&gt; {
+            try {
+                System.out.println(Thread.currentThread().getName() + &quot;正在执行...&quot;);
+                Thread.sleep(1000);
+                System.out.println(Thread.currentThread().getName() + &quot;执行完毕...&quot;);
+                countDownLatch.countDown();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+        new Thread(() -&gt; {
+            try {
+                System.out.println(Thread.currentThread().getName() + &quot;正在执行..&quot;);
+                Thread.sleep(1000);
+                System.out.println(Thread.currentThread().getName() + &quot;执行完毕..&quot;);
+                countDownLatch.countDown();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+        System.out.println(&quot;等待2个子线程执行完毕...&quot;);
+        countDownLatch.await();//调用await()方法的线程会被挂起，它会等待直到count值为0才继续执行
+      //  countDownLatch.await(10, TimeUnit.MICROSECONDS);
+        System.out.println(&quot;2个子线程已经执行完毕&quot;);
+
+
+
+
+    }
+
+}
+</code></pre><pre><code>Thread-0正在执行...
+Thread-1正在执行..
+等待2个子线程执行完毕...
+Thread-0执行完毕...
+Thread-1执行完毕..
+2个子线程已经执行完毕</code></pre><p><strong>CyclicBarrier 的用法</strong>  </p>
+<pre><code>package com.example.demo.util;
+
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+
+public class CyclicBarrierTest {
+
+    private static CyclicBarrier cyclicBarrier=new CyclicBarrier(2, new Runnable() {
+        @Override
+        public void run() {
+            System.out.println(&quot;屏障放开后,立马执行我,在执行其他线程&quot;);
+        }
+    });
+
+    public static void main(String[] args) throws Exception{
+        new Thread(() -&gt; {
+            try {
+                System.out.println(Thread.currentThread().getName() + &quot;正在执行...&quot;);
+                Thread.sleep(3000);
+                cyclicBarrier.await();
+                System.out.println(Thread.currentThread().getName() + &quot;执行完毕...&quot;);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+            }
+        }).start();
+        new Thread(() -&gt; {
+            try {
+                System.out.println(Thread.currentThread().getName() + &quot;正在执行..&quot;);
+                Thread.sleep(1000);
+                cyclicBarrier.await();
+                System.out.println(Thread.currentThread().getName() + &quot;执行完毕..&quot;);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (BrokenBarrierException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+
+    }
+}
+</code></pre><pre><code>Thread-0正在执行...
+Thread-1正在执行..
+屏障放开后,立马执行我,在执行其他线程
+Thread-0执行完毕...
+Thread-1执行完毕.. </code></pre><p><strong>Semaphore 用法</strong>  </p>
+<pre><code>package com.example.demo.util;
+
+import java.time.LocalDateTime;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
+
+public class SemaphoreTest {
+   //只允许5个线程执行
+    private static int THREAD_COUNT = 5;
+
+    private static Semaphore semaphore = new Semaphore(THREAD_COUNT);
+
+    public static void main(String[] args) {
+
+        ExecutorService executorService = Executors.newCachedThreadPool();
+
+        for (int i = 0; i &lt; 100; i++) {
+            executorService.execute(() -&gt; {
+                try {
+                    //获取一个许可证
+                    semaphore.acquire();
+                    System.out.println(LocalDateTime.now()+&quot;===&quot;+Thread.currentThread().getName());
+                    doSomeThing();
+                    //释放许可证
+                    semaphore.release();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+        executorService.shutdown();
+    }
+
+    public static void doSomeThing() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+</code></pre><pre><code>2019-07-27T13:57:12.677===pool-1-thread-26
+2019-07-27T13:57:12.679===pool-1-thread-27
+2019-07-27T13:57:12.679===pool-1-thread-30
+2019-07-27T13:57:12.679===pool-1-thread-28
+2019-07-27T13:57:12.679===pool-1-thread-29
+2019-07-27T13:57:17.678===pool-1-thread-31
+2019-07-27T13:57:17.680===pool-1-thread-32
+2019-07-27T13:57:17.680===pool-1-thread-33
+2019-07-27T13:57:17.681===pool-1-thread-35
+2019-07-27T13:57:17.681===pool-1-thread-34
+2019-07-27T13:57:22.678===pool-1-thread-36
+2019-07-27T13:57:22.682===pool-1-thread-38
+2019-07-27T13:57:22.688===pool-1-thread-39
+2019-07-27T13:57:22.688===pool-1-thread-40
+2019-07-27T13:57:22.682===pool-1-thread-37
+</code></pre><p>尝试获取许可证,没有获取到都不执行</p>
+<pre><code>package com.example.demo.util;
+
+import java.time.LocalDateTime;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
+
+public class SemaphoreTest {
+    private static int THREAD_COUNT = 5;
+
+    private static Semaphore semaphore = new Semaphore(THREAD_COUNT);
+
+    public static void main(String[] args) {
+
+        ExecutorService executorService = Executors.newCachedThreadPool();
+
+        for (int i = 0; i &lt; 10; i++) {
+            executorService.execute(() -&gt; {
+                    //尝试获取一个许可证
+                    if(semaphore.tryAcquire()){
+                        System.out.println(LocalDateTime.now()+&quot;===&quot;+Thread.currentThread().getName());
+                        doSomeThing();
+                        //释放许可证
+                        semaphore.release();
+                    }
+
+
+
+            });
+        }
+        executorService.shutdown();
+    }
+
+    public static void doSomeThing() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+</code></pre><pre><code>2019-07-27T14:03:57.117===pool-1-thread-1
+2019-07-27T14:03:57.117===pool-1-thread-4
+2019-07-27T14:03:57.117===pool-1-thread-3
+2019-07-27T14:03:57.117===pool-1-thread-2
+2019-07-27T14:03:57.117===pool-1-thread-5</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+
+
+
+    <!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p class="copyright text-muted">
+          Theme By <a target="_blank" href="https://github.com/levblanc">Levblanc.</a>
+          Inspired By <a target="_blank" href="https://github.com/klugjo/hexo-theme-clean-blog">Clean Blog.</a>
+        <p class="copyright text-muted">
+          Powered By <a target="_blank" href="https://hexo.io/">Hexo.</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    <!-- After Footer Scripts -->
+<script src="/js/highlight.pack.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    var codeBlocks = Array.prototype.slice.call(document.getElementsByTagName('pre'))
+    codeBlocks.forEach(function(block, index) {
+      hljs.highlightBlock(block);
+    });
+  });
+</script>
+
+  </body>
+</html>
+
