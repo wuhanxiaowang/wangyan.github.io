@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+  <!-- Html Head Tag-->
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content>
+  <meta name="author" content="Mr Wang">
+  <!-- Open Graph Data -->
+  <meta property="og:title" content="静态代理和JDK动态代理">
+  <meta property="og:description" content>
+  <meta property="og:site_name" content="春风不及你的美🐷">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="http://yoursite.com">
+  
+    <link rel="alternate" href="/atom.xml" title="春风不及你的美🐷" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+
+  <!-- Site Title -->
+  <title>春风不及你的美🐷</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <!-- Custom CSS -->
+  
+  <link rel="stylesheet" href="/css/style.light.css">
+
+  <!-- Google Analytics -->
+  
+
+</head>
+
+  <body>
+    <!-- Page Header -->
+
+
+<header class="site-header header-background" style="background-image: url(/img/default-banner-dark.jpg)">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="page-title with-background-image">
+          <p class="title">静态代理和JDK动态代理</p>
+          <p class="subtitle"></p>
+        </div>
+        <div class="site-menu with-background-image">
+          <ul>
+            
+              <li>
+                <a href="/">
+                  
+                  Home
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="/archives">
+                  
+                  Archives
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="https://github.com/<your-github-username>">
+                  
+                  Github
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="mailto:<your-email-address>">
+                  
+                  Email
+                  
+                </a>
+              </li>
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<article>
+  <div class="container typo">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-info text-muted">
+          
+            <!-- Author -->
+            <span class="author info">By Mr Wang</span>
+          
+          <!-- Date -->
+          <span class="date-time info">On
+            <span class="date">2019-09-06</span>
+            <span class="time">17:13:27</span>
+          </span>
+          
+        </div>
+        <!-- Tags -->
+        
+        <!-- Post Main Content -->
+        <div class="post-content">
+          <p>代理模式分静态代理和动态代理.在程序运行前,编译好的代理类称为静态代理.在程序运行期间动态创建代理类,来完成具体功能,叫动态代理.</p>
+<p><strong>静态代理</strong><br>静态代理的实现分三步:<br>1.定义业务接口<br>2.实现业务接口<br>3.定义代理类,并实现业务接口<br>代码如下:<br>定义接口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.proxy;</span><br><span class="line"></span><br><span class="line">public interface BuyHouse &#123;</span><br><span class="line">    //业务，谁买了房子?</span><br><span class="line">    public String buy(String name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>定义实现类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.proxy;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @ClassName BuyHouseImpl</span><br><span class="line"> * @Description TODO</span><br><span class="line"> * @Author 王炎</span><br><span class="line"> * @Date 2019/9/6 13:29</span><br><span class="line"> * @ModifyDate 2019/9/6 13:29</span><br><span class="line"> * @Version 1.0</span><br><span class="line"> */</span><br><span class="line">public class BuyHouseImpl implements BuyHouse &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String buy(String name) &#123;</span><br><span class="line">        System.out.println(name + &quot;买完房子&quot;);</span><br><span class="line">        return name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>定义代理类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.proxy;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @ClassName BuyHouseProxy</span><br><span class="line"> * @Description TODO</span><br><span class="line"> * @Author 王炎</span><br><span class="line"> * @Date 2019/9/6 13:33</span><br><span class="line"> * @ModifyDate 2019/9/6 13:33</span><br><span class="line"> * @Version 1.0</span><br><span class="line"> */</span><br><span class="line">public class BuyHouseProxy implements BuyHouse &#123;</span><br><span class="line">    private BuyHouseImpl buyHouse;</span><br><span class="line"></span><br><span class="line">    public BuyHouseProxy(BuyHouseImpl buyHouse) &#123;</span><br><span class="line">        this.buyHouse = buyHouse;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String buy(String name) &#123;</span><br><span class="line">        System.out.println(&quot;我是代理,处理前===============&quot;);</span><br><span class="line">        String result = buyHouse.buy(name);</span><br><span class="line">        System.out.println(&quot;我是代理,处理后===============&quot;);</span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.proxy;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @ClassName BuyHouseTest</span><br><span class="line"> * @Description TODO</span><br><span class="line"> * @Author 王炎</span><br><span class="line"> * @Date 2019/9/6 13:37</span><br><span class="line"> * @ModifyDate 2019/9/6 13:37</span><br><span class="line"> * @Version 1.0</span><br><span class="line"> */</span><br><span class="line">public class BuyHouseTest &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        BuyHouseImpl buyHouse = new BuyHouseImpl();</span><br><span class="line">        BuyHouseProxy buyHouseProxy = new BuyHouseProxy(buyHouse);</span><br><span class="line">        buyHouseProxy.buy(&quot;wy&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我是代理,处理前===============</span><br><span class="line">wy买完房子</span><br><span class="line">我是代理,处理后===============</span><br></pre></td></tr></table></figure>
+
+<p><strong>JDK动态代理</strong><br>JDK动态代理的一般步骤如下：<br>1.创建业务接口<br>2.创建业务接口实现类<br>3.创建代理类,实现InvocationHandler接口<br>代码如下:</p>
+<p>创建业务接口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.proxy;</span><br><span class="line"></span><br><span class="line">public interface BuyHouse &#123;</span><br><span class="line">    public String buy(String name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实现业务接口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.proxy;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @ClassName BuyHouseImpl</span><br><span class="line"> * @Description TODO</span><br><span class="line"> * @Author 王炎</span><br><span class="line"> * @Date 2019/9/6 13:29</span><br><span class="line"> * @ModifyDate 2019/9/6 13:29</span><br><span class="line"> * @Version 1.0</span><br><span class="line"> */</span><br><span class="line">public class BuyHouseImpl implements BuyHouse &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String buy(String name) &#123;</span><br><span class="line">        System.out.println(name + &quot;买完房子&quot;);</span><br><span class="line">        return name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建代理类,实现InvocationHandler接口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.proxy;</span><br><span class="line"></span><br><span class="line">import java.lang.reflect.InvocationHandler;</span><br><span class="line">import java.lang.reflect.Method;</span><br><span class="line">import java.lang.reflect.Proxy;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @ClassName MyInvocationHandler</span><br><span class="line"> * @Description TODO</span><br><span class="line"> * @Author 王炎</span><br><span class="line"> * @Date 2019/9/6 13:55</span><br><span class="line"> * @ModifyDate 2019/9/6 13:55</span><br><span class="line"> * @Version 1.0</span><br><span class="line"> */</span><br><span class="line">public class MyInvocationHandler implements InvocationHandler &#123;</span><br><span class="line">    /**</span><br><span class="line">     * 真实业务对象</span><br><span class="line">     */</span><br><span class="line">    private Object target;</span><br><span class="line"></span><br><span class="line">    public MyInvocationHandler(Object target) &#123;</span><br><span class="line">        this.target = target;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获取真实业务对象</span><br><span class="line">     *</span><br><span class="line">     * @return</span><br><span class="line">     * @throws Throwable</span><br><span class="line">     */</span><br><span class="line">    public Object getProxy() throws Throwable &#123;</span><br><span class="line">        return Proxy.newProxyInstance(target.getClass().getClassLoader(), target.getClass().getInterfaces(), this);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</span><br><span class="line">        System.out.println(&quot;调用&quot;+method.getName()+&quot;方法前=============&quot;);</span><br><span class="line">        /**</span><br><span class="line">         * 反射调用，目标方法</span><br><span class="line">         */</span><br><span class="line">        Object result = method.invoke(target, args);</span><br><span class="line">        System.out.println(&quot;调用&quot;+method.getName()+&quot;方法后=============&quot;);</span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编写测试类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.proxy;</span><br><span class="line"></span><br><span class="line">import java.lang.reflect.Proxy;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @ClassName BuyHouseTest</span><br><span class="line"> * @Description TODO</span><br><span class="line"> * @Author 王炎</span><br><span class="line"> * @Date 2019/9/6 13:37</span><br><span class="line"> * @ModifyDate 2019/9/6 13:37</span><br><span class="line"> * @Version 1.0</span><br><span class="line"> */</span><br><span class="line">public class BuyHouseTest &#123;</span><br><span class="line">    public static void main(String[] args) throws Throwable &#123;</span><br><span class="line"></span><br><span class="line">        BuyHouse proxy= (BuyHouse) new MyInvocationHandler(new BuyHouseImpl()).getProxy();</span><br><span class="line">        proxy.buy(&quot;wy&quot;);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">调用buy方法前=============</span><br><span class="line">wy买完房子</span><br><span class="line">调用buy方法后=============</span><br></pre></td></tr></table></figure>
+
+<p><strong>cglib动态代理(第三方包)</strong><br>cglib动态代理的一般步骤如下：<br>1.创建业务类(没有接口)<br>2.创建代理类,实现MethodInterceptor<br>代码如下:<br>业务类:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.proxy;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @ClassName BuyHouseImpl</span><br><span class="line"> * @Description 如果类是final的，则没法生成代理对象，报错。</span><br><span class="line"> * @Author 王炎</span><br><span class="line"> * @Date 2019/9/6 13:29</span><br><span class="line"> * @ModifyDate 2019/9/6 13:29</span><br><span class="line"> * @Version 1.0</span><br><span class="line"> */</span><br><span class="line">public class BuyHouseImpl &#123;</span><br><span class="line">    public String buy(String name) &#123;</span><br><span class="line">        System.out.println(name + &quot;买完房子&quot;);</span><br><span class="line">        return name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建代理类,实现MethodInterceptor</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.proxy;</span><br><span class="line"></span><br><span class="line">import net.sf.cglib.proxy.Enhancer;</span><br><span class="line">import net.sf.cglib.proxy.MethodInterceptor;</span><br><span class="line">import net.sf.cglib.proxy.MethodProxy;</span><br><span class="line"></span><br><span class="line">import java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @ClassName BuyHouseByCglibProxy</span><br><span class="line"> * @Description 使用Cglib动态代理</span><br><span class="line"> * @Author 王炎</span><br><span class="line"> * @Date 2019/9/6 14:32</span><br><span class="line"> * @ModifyDate 2019/9/6 14:32</span><br><span class="line"> * @Version 1.0</span><br><span class="line"> */</span><br><span class="line">public class BuyHouseByCglibProxy implements MethodInterceptor &#123;</span><br><span class="line">    private Object target;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 创建代理实例</span><br><span class="line">     *</span><br><span class="line">     * @param target</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public Object getInstance(Object target) &#123;</span><br><span class="line">        this.target = target;</span><br><span class="line">        Enhancer enhancer = new Enhancer();</span><br><span class="line">        enhancer.setSuperclass(this.target.getClass());</span><br><span class="line">        /**</span><br><span class="line">         * 设置回调方法</span><br><span class="line">         */</span><br><span class="line">        enhancer.setCallback(this);</span><br><span class="line">        /**</span><br><span class="line">         * 创建代理对象</span><br><span class="line">         */</span><br><span class="line">        return enhancer.create();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable &#123;</span><br><span class="line">        System.out.println(&quot;调用&quot; + method.getName() + &quot;方法前=============&quot;);</span><br><span class="line">        Object result = methodProxy.invokeSuper(o, objects);</span><br><span class="line">        System.out.println(&quot;调用&quot; + method.getName() + &quot;方法前=============&quot;);</span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.proxy;</span><br><span class="line"></span><br><span class="line">import java.lang.reflect.Proxy;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @ClassName BuyHouseTest</span><br><span class="line"> * @Description TODO</span><br><span class="line"> * @Author 王炎</span><br><span class="line"> * @Date 2019/9/6 13:37</span><br><span class="line"> * @ModifyDate 2019/9/6 13:37</span><br><span class="line"> * @Version 1.0</span><br><span class="line"> */</span><br><span class="line">public class BuyHouseTest &#123;</span><br><span class="line">    public static void main(String[] args) throws Throwable &#123;</span><br><span class="line"></span><br><span class="line">        BuyHouseByCglibProxy buyHouseByCglibProxy=new BuyHouseByCglibProxy();</span><br><span class="line"></span><br><span class="line">        BuyHouseImpl instance =(BuyHouseImpl)buyHouseByCglibProxy.getInstance(new BuyHouseImpl());</span><br><span class="line"></span><br><span class="line">        instance.buy(&quot;wy&quot;);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">调用buy方法前=============</span><br><span class="line">wy买完房子</span><br><span class="line">调用buy方法前=============</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>优缺点</p>
+<pre><code>jdk静态代理类只能为一个被代理类服务，如果需要代理的类比较多，那么会产生过多的代理类。jdk静态代理在编译时产生class文件，运行时无需产生，可直接使用，效率好。
+
+jdk动态代理必须实现接口，通过反射来动态代理方法，消耗系统性能。但是无需产生过多的代理类，避免了重复代码的产生，系统更加灵活。
+
+cglib动态代理无需实现接口，通过生成子类字节码来实现，比反射快一点，没有性能问题。但是由于cglib会继承被代理类，需要重写被代理方法，所以被代理类不能是final类，被代理方法不能是final。</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+
+
+
+    <!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p class="copyright text-muted">
+          Theme By <a target="_blank" href="https://github.com/levblanc">Levblanc.</a>
+          Inspired By <a target="_blank" href="https://github.com/klugjo/hexo-theme-clean-blog">Clean Blog.</a>
+        <p class="copyright text-muted">
+          Powered By <a target="_blank" href="https://hexo.io/">Hexo.</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    <!-- After Footer Scripts -->
+<script src="/js/highlight.pack.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    var codeBlocks = Array.prototype.slice.call(document.getElementsByTagName('pre'))
+    codeBlocks.forEach(function(block, index) {
+      hljs.highlightBlock(block);
+    });
+  });
+</script>
+
+  </body>
+</html>
+

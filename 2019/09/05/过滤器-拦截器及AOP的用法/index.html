@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+  <!-- Html Head Tag-->
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content>
+  <meta name="author" content="Mr Wang">
+  <!-- Open Graph Data -->
+  <meta property="og:title" content="过滤器,拦截器及切面的用法">
+  <meta property="og:description" content>
+  <meta property="og:site_name" content="春风不及你的美🐷">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="http://yoursite.com">
+  
+    <link rel="alternate" href="/atom.xml" title="春风不及你的美🐷" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+
+  <!-- Site Title -->
+  <title>春风不及你的美🐷</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <!-- Custom CSS -->
+  
+  <link rel="stylesheet" href="/css/style.light.css">
+
+  <!-- Google Analytics -->
+  
+
+</head>
+
+  <body>
+    <!-- Page Header -->
+
+
+<header class="site-header header-background" style="background-image: url(/img/default-banner-dark.jpg)">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="page-title with-background-image">
+          <p class="title">过滤器,拦截器及切面的用法</p>
+          <p class="subtitle"></p>
+        </div>
+        <div class="site-menu with-background-image">
+          <ul>
+            
+              <li>
+                <a href="/">
+                  
+                  Home
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="/archives">
+                  
+                  Archives
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="https://github.com/<your-github-username>">
+                  
+                  Github
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="mailto:<your-email-address>">
+                  
+                  Email
+                  
+                </a>
+              </li>
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<article>
+  <div class="container typo">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-info text-muted">
+          
+            <!-- Author -->
+            <span class="author info">By Mr Wang</span>
+          
+          <!-- Date -->
+          <span class="date-time info">On
+            <span class="date">2019-09-05</span>
+            <span class="time">17:13:27</span>
+          </span>
+          
+        </div>
+        <!-- Tags -->
+        
+        <!-- Post Main Content -->
+        <div class="post-content">
+          <p><strong>过滤器</strong><br>  过滤器是在Java web中将传入的request和response提前过滤一些信息,或者提前设置一些参数.然后在传入servlet进行业务处理.比如过滤掉非法URL(不是login.do的地址请求,如果用户没登陆就都过滤掉).也可以提前设置字符集,或者去掉非法字符    </p>
+<p><strong>拦截器</strong><br> 拦截器是面向切面编程,依赖Spring框架,基于java反射机制实现的.拦截器可以在方法调用前后进行业务处理。拦截器到方法级别.(比如某个controller的某个method方法)  </p>
+<p><strong>AOP</strong><br>AOP是Spring框架面向切面的编程思想,其编程思想是将不同业务但功能相同的代码从业务逻辑中抽取出来,封装成独立模块,这种独立模块称为切面.切面具体功能方法称为关注点.(比如,每个业务都需要登录,就可以把登录这个代码封装成独立模块,这个就是切面).在业务逻辑执行中,AOP会把分离出来的切面和关注点动态切入到业务流程中,这样的好处提高代码的复用性和可维护性.  </p>
+<p><strong>过滤器和拦截器的区别</strong><br>1.拦截器是基于java反射机制,过滤器是函数回调<br>2.拦截器不依赖servlet容器,过滤器依赖servlet容器<br>3.拦截器可以被多次调用,过滤器只能在容器初始化时调用一次<br>4.拦截器可以获取IOC容器的各种bean,可以注入service,调用业务,过滤器不行  </p>
+<p><strong>如图</strong><br><img src="/img/45.png" alt="如图">  </p>
+<p>过滤器拦截器运行先后步骤:<br><img src="/img/46.png" alt="如图">  </p>
+<p><strong>Spring boot过滤器的使用</strong><br>两种方式：<br>1、使用spring boot提供的FilterRegistrationBean注册Filter<br>2、使用原生servlet注解定义Filter<br>方式一:<br>①、定义过滤器:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.fifter;</span><br><span class="line"></span><br><span class="line">import javax.servlet.*;</span><br><span class="line">import java.io.IOException;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @ClassName MyFifter</span><br><span class="line"> * @Description TODO</span><br><span class="line"> * @Author 王炎</span><br><span class="line"> * @Date 2019/9/5 16:23</span><br><span class="line"> * @ModifyDate 2019/9/5 16:23</span><br><span class="line"> * @Version 1.0</span><br><span class="line"> */</span><br><span class="line">public class MyFifter implements Filter &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void init(FilterConfig filterConfig) throws ServletException &#123;</span><br><span class="line">        System.out.println(&quot;容器启动时,掉初始化方法======================&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException &#123;</span><br><span class="line">        long start = System.currentTimeMillis();</span><br><span class="line">        System.out.println(&quot;方法开始之前==============================&quot;);</span><br><span class="line">        filterChain.doFilter(servletRequest, servletResponse);</span><br><span class="line">        System.out.println(&quot;方法结束==================================&quot;);</span><br><span class="line">        System.out.println(&quot;方法用时&quot; + (System.currentTimeMillis() - start));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void destroy() &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>②、配置过滤器:  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.config;</span><br><span class="line">import com.example.demo.fifter.MyFifter;</span><br><span class="line">import org.springframework.boot.web.servlet.FilterRegistrationBean;</span><br><span class="line">import org.springframework.context.annotation.Bean;</span><br><span class="line">import org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @ClassName FilterConfig</span><br><span class="line"> * @Description TODO</span><br><span class="line"> * @Author 王炎</span><br><span class="line"> * @Date 2019/9/5 16:29</span><br><span class="line"> * @ModifyDate 2019/9/5 16:29</span><br><span class="line"> * @Version 1.0</span><br><span class="line"> */</span><br><span class="line">@Configuration</span><br><span class="line">public class FilterConfig &#123;</span><br><span class="line">    @Bean</span><br><span class="line">    public FilterRegistrationBean registFilter() &#123;</span><br><span class="line">        FilterRegistrationBean registration = new FilterRegistrationBean();</span><br><span class="line">        registration.setFilter(new MyFifter());</span><br><span class="line">        registration.addUrlPatterns(&quot;/*&quot;);</span><br><span class="line">        registration.setName(&quot;MyFilter&quot;);</span><br><span class="line">        //过滤器执行顺序</span><br><span class="line">        registration.setOrder(1);</span><br><span class="line">        return registration;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编写controller</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.controller;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"></span><br><span class="line">import org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line">@RestController</span><br><span class="line">@RequestMapping(&quot;/demo&quot;)</span><br><span class="line">public class UserInfoController &#123;</span><br><span class="line">    @RequestMapping(&quot;/hello&quot;)</span><br><span class="line">    public String hello() &#123;</span><br><span class="line">        System.out.println(&quot;hello方法开始================================&quot;);</span><br><span class="line">        try &#123;</span><br><span class="line">            Thread.sleep(3000);</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        return &quot;hello&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">掉方法之前================</span><br><span class="line">hello方法开始================================</span><br><span class="line">方法结束==================================</span><br><span class="line">方法花费时间===========3041</span><br></pre></td></tr></table></figure>
+
+<p>方式二:  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.fifter;</span><br><span class="line"></span><br><span class="line">import org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line">import javax.servlet.*;</span><br><span class="line">import javax.servlet.annotation.WebFilter;</span><br><span class="line">import java.io.IOException;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @ClassName MyFilter2</span><br><span class="line"> * @Description TODO</span><br><span class="line"> * @Author 王炎</span><br><span class="line"> * @Date 2019/9/6 10:30</span><br><span class="line"> * @ModifyDate 2019/9/6 10:30</span><br><span class="line"> * @Version 1.0</span><br><span class="line"> */</span><br><span class="line">@Component</span><br><span class="line">@WebFilter(filterName = &quot;MyFilter2&quot;, urlPatterns = &quot;/*&quot;)</span><br><span class="line">public class MyFilter2 implements Filter &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void init(FilterConfig filterConfig) throws ServletException &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException &#123;</span><br><span class="line">        long start = System.currentTimeMillis();</span><br><span class="line">        System.out.println(&quot;方法开始之前==============================&quot;);</span><br><span class="line">        filterChain.doFilter(servletRequest, servletResponse);</span><br><span class="line">        System.out.println(&quot;方法结束==================================&quot;);</span><br><span class="line">        System.out.println(&quot;方法用时&quot; + (System.currentTimeMillis() - start));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void destroy() &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">掉方法之前================</span><br><span class="line">hello方法开始================================</span><br><span class="line">方法结束==================================</span><br><span class="line">方法花费时间===========3041</span><br></pre></td></tr></table></figure>
+
+<p>如果有多个过滤器,第二种使用先后顺序,所以一般用第一种配置  </p>
+<hr>
+<p><strong>Spring boot拦截器的使用</strong><br>①、定义拦截器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.interceptor;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import org.springframework.web.servlet.HandlerInterceptor;</span><br><span class="line">import org.springframework.web.servlet.ModelAndView;</span><br><span class="line"></span><br><span class="line">import javax.servlet.http.HttpServletRequest;</span><br><span class="line">import javax.servlet.http.HttpServletResponse;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @ClassName MyInterceptor</span><br><span class="line"> * @Description TODO</span><br><span class="line"> * @Author 王炎</span><br><span class="line"> * @Date 2019/9/5 16:36</span><br><span class="line"> * @ModifyDate 2019/9/5 16:36</span><br><span class="line"> * @Version 1.0</span><br><span class="line"> */</span><br><span class="line">public class MyInterceptor implements HandlerInterceptor &#123;</span><br><span class="line">    long start=System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 拦截之前调用（进入Controller之前）</span><br><span class="line">     */</span><br><span class="line">    @Override</span><br><span class="line">    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) &#123;</span><br><span class="line">        System.out.println(&quot;掉方法之前================&quot;);</span><br><span class="line">        start=System.currentTimeMillis();</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 调用方法之后，视图渲染之前</span><br><span class="line">     */</span><br><span class="line">    @Override</span><br><span class="line">    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) &#123;</span><br><span class="line">        System.out.println(&quot;方法结束==================================&quot;);</span><br><span class="line">        System.out.println(&quot;方法花费时间===========&quot;+(System.currentTimeMillis()-start));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 完成拦截之后，用于清理资源</span><br><span class="line">     */</span><br><span class="line">    @Override</span><br><span class="line">    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) &#123;</span><br><span class="line">        System.out.println(&quot;afterCompletion MyInterceptor&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>②、配置拦截器：</p>
+<pre><code>package com.example.demo.config;
+
+
+import com.example.demo.interceptor.MyInterceptor;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+
+/**
+ * @ClassName InterceptorConfig
+ * @Description TODO
+ * @Author 王炎
+ * @Date 2019/9/5 16:46
+ * @ModifyDate 2019/9/5 16:46
+ * @Version 1.0
+ */
+@Configuration
+public class InterceptorConfig implements WebMvcConfigurer {
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new MyInterceptor()).addPathPatterns(&quot;/**&quot;);
+    }
+}
+
+</code></pre><p> 编写controller</p>
+<pre><code>package com.example.demo.controller;
+
+
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/demo&quot;)
+public class UserInfoController {
+    @RequestMapping(&quot;/hello&quot;)
+    public String hello() {
+        System.out.println(&quot;hello方法开始================================&quot;);
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return &quot;hello&quot;;
+    }
+}
+
+</code></pre><p>结果</p>
+<pre><code>掉方法之前================
+hello方法开始================================
+方法结束==================================
+方法花费时间===========3041
+afterCompletion MyInterceptor</code></pre><hr>
+<p><strong>Spring boot AOP的使用</strong></p>
+<p>AOP的概念：<br><strong>切面（Aspect）</strong><br>其实就是共有功能的实现。如日志切面、权限切面、事务切面等。在实际应用中通常是一个存放共有功能实现的普通Java类，之所以能被AOP容器识别成切面，是在配置中指定的。</p>
+<p><strong>增强（Advice）</strong><br>是切面的具体实现。以目标方法为参照点，根据放置的地方不同，可分为前置通知（Before）、后置通知（AfterReturning）、异常通知（AfterThrowing）、最终通知（After）与环绕通知（Around）5种。在实际应用中通常是切面类中的一个方法，具体属于哪类通知，同样是在配置中指定的。</p>
+<p><strong>连接点（Joinpoint）</strong><br>就是程序在运行过程中能够插入切面的地点。例如，方法调用、异常抛出或字段修改等，但spring只支持方法级的连接点。</p>
+<p><strong>切入点（Pointcut）</strong><br>用于定义通知应该切入到哪些连接点上。不同的通知通常需要切入到不同的连接点上，这种精准的匹配是由切入点的正则表达式来定义的。</p>
+<p><strong>目标对象（Target）</strong><br>就是那些即将切入切面的对象，也就是那些被通知的对象。这些对象中已经只剩下干干净净的核心业务逻辑代码了，所有的共有功能代码等待AOP容器的切入。</p>
+<p><strong>代理对象（Proxy）</strong><br>将通知应用到目标对象之后被动态创建的对象。可以简单地理解为，代理对象的功能等于目标对象的核心业务逻辑功能加上共有功能。代理对象对于使用者而言是透明的，是程序运行过程中的产物。</p>
+<p><strong>织入（Weaving）</strong><br>将切面应用到目标对象从而创建一个新的代理对象的过程。这个过程可以发生在编译期、类装载期及运行期，当然不同的发生点有着不同的前提条件。譬如发生在编译期的话，就要求有一个支持这种AOP实现的特殊编译器；发生在类装载期，就要求有一个支持AOP实现的特殊类装载器；只有发生在运行期，则可直接通过Java语言的反射机制与动态代理机制来动态实现。还有引入（Introduction），用以区分类和方法的拦截。</p>
+<p>Spring切面定义了5种类型通知：</p>
+<p>1）前置通知(Before)：在目标方法被调用之前调用通知功能。</p>
+<p>2）后置通知(After)：在目标方法完成之后调用通知，不会关心方法的输出是什么。</p>
+<p>3）返回通知(After-returning)： 在目标方法成功执行之后调用通知。</p>
+<p>4）异常通知(After-throwing)：在目标方法抛出异常后调用通知。</p>
+<p>5）环绕通知(Around)：通知包裹了被通知的方法，在被通知的方法调用之前和之后执行自定义的行为。</p>
+<hr>
+<pre><code>package com.example.demo.aop;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
+import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+
+/**
+ * @ClassName WebControllerAop
+ * @Description TODO
+ * @Author 王炎
+ * @Date 2019/9/6 11:25
+ * @ModifyDate 2019/9/6 11:25
+ * @Version 1.0
+ */
+@Aspect
+@Component
+public class WebControllerAop {
+
+    @Pointcut(&quot;execution(public * com.example.demo.controller.*.*(..))&quot;)
+    public void webLog() {
+
+    }
+
+    /**
+     * 前置通知，方法调用前被调用
+     *
+     * @param joinPoint
+     */
+    @Before(&quot;webLog()&quot;)
+    public void doBefore(JoinPoint joinPoint) {
+        System.out.println(&quot;我是前置通知!!!&quot;);
+        //获取目标方法的参数信息
+        Object[] obj = joinPoint.getArgs();
+        Signature signature = joinPoint.getSignature();
+        //代理的是哪一个方法
+        System.out.println(&quot;方法：&quot; + signature.getName());
+        //AOP代理类的名字
+        System.out.println(&quot;方法所在包:&quot; + signature.getDeclaringTypeName());
+        //AOP代理类的类（class）信息
+        signature.getDeclaringType();
+        MethodSignature methodSignature = (MethodSignature) signature;
+        String[] strings = methodSignature.getParameterNames();
+        System.out.println(&quot;参数名：&quot; + Arrays.toString(strings));
+        System.out.println(&quot;参数值ARGS : &quot; + Arrays.toString(joinPoint.getArgs()));
+        // 接收到请求，记录请求内容
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest req = attributes.getRequest();
+        // 记录下请求内容
+        System.out.println(&quot;请求URL : &quot; + req.getRequestURL().toString());
+        System.out.println(&quot;HTTP_METHOD : &quot; + req.getMethod());
+        System.out.println(&quot;IP : &quot; + req.getRemoteAddr());
+        System.out.println(&quot;CLASS_METHOD : &quot; + joinPoint.getSignature().getDeclaringTypeName() + &quot;.&quot; + joinPoint.getSignature().getName());
+
+    }
+
+    /**
+     * 处理完请求返回内容
+     *
+     * @param ret
+     * @throws Throwable
+     */
+    @AfterReturning(returning = &quot;ret&quot;, pointcut = &quot;webLog()&quot;)
+    public void doAfterReturning(Object ret) throws Throwable {
+        // 处理完请求，返回内容
+        System.out.println(&quot;方法的返回值 : &quot; + ret);
+    }
+
+    /**
+     * 后置异常通知
+     *
+     * @param jp
+     */
+    @AfterThrowing(&quot;webLog()&quot;)
+    public void throwss(JoinPoint jp) {
+        System.out.println(&quot;方法异常时执行.....&quot;);
+    }
+
+    /**
+     * 后置最终通知,final增强，不管是抛出异常或者正常退出都会执行
+     *
+     * @param jp
+     */
+    @After(&quot;webLog()&quot;)
+    public void after(JoinPoint jp) {
+        System.out.println(&quot;我是后置通知!!!&quot;);
+    }
+
+    /**
+     * 环绕通知,环绕增强，相当于MethodInterceptor
+     *
+     * @param pjp
+     * @return
+     */
+    @Around(&quot;webLog()&quot;)
+    public Object arround(ProceedingJoinPoint pjp) {
+        try {
+            System.out.println(&quot;调用方法前====================&quot;);
+            Object o = pjp.proceed();
+            System.out.println(&quot;调用方法后====================&quot;);
+            return o;
+        } catch (Throwable e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+}
+
+</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+
+
+
+    <!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p class="copyright text-muted">
+          Theme By <a target="_blank" href="https://github.com/levblanc">Levblanc.</a>
+          Inspired By <a target="_blank" href="https://github.com/klugjo/hexo-theme-clean-blog">Clean Blog.</a>
+        <p class="copyright text-muted">
+          Powered By <a target="_blank" href="https://hexo.io/">Hexo.</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    <!-- After Footer Scripts -->
+<script src="/js/highlight.pack.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    var codeBlocks = Array.prototype.slice.call(document.getElementsByTagName('pre'))
+    codeBlocks.forEach(function(block, index) {
+      hljs.highlightBlock(block);
+    });
+  });
+</script>
+
+  </body>
+</html>
+
