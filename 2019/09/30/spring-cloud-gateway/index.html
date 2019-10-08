@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+  <!-- Html Head Tag-->
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content>
+  <meta name="author" content="Mr Wang">
+  <!-- Open Graph Data -->
+  <meta property="og:title" content="spring cloud gateway">
+  <meta property="og:description" content>
+  <meta property="og:site_name" content="春风不及你的美🐷">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="http://yoursite.com">
+  
+    <link rel="alternate" href="/atom.xml" title="春风不及你的美🐷" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+
+  <!-- Site Title -->
+  <title>春风不及你的美🐷</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <!-- Custom CSS -->
+  
+  <link rel="stylesheet" href="/css/style.light.css">
+
+  <!-- Google Analytics -->
+  
+
+</head>
+
+  <body>
+    <!-- Page Header -->
+
+
+<header class="site-header header-background" style="background-image: url(/img/default-banner-dark.jpg)">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="page-title with-background-image">
+          <p class="title">spring cloud gateway</p>
+          <p class="subtitle"></p>
+        </div>
+        <div class="site-menu with-background-image">
+          <ul>
+            
+              <li>
+                <a href="/">
+                  
+                  Home
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="/archives">
+                  
+                  Archives
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="https://github.com/<your-github-username>">
+                  
+                  Github
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="mailto:<your-email-address>">
+                  
+                  Email
+                  
+                </a>
+              </li>
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<article>
+  <div class="container typo">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-info text-muted">
+          
+            <!-- Author -->
+            <span class="author info">By Mr Wang</span>
+          
+          <!-- Date -->
+          <span class="date-time info">On
+            <span class="date">2019-09-30</span>
+            <span class="time">11:57:09</span>
+          </span>
+          
+        </div>
+        <!-- Tags -->
+        
+        <!-- Post Main Content -->
+        <div class="post-content">
+          <p>Spring Cloud Gateway是Spring官方基于Spring 5.0，Spring Boot 2.0和Project Reactor等技术开发的网关，Spring Cloud Gateway旨在为微服务架构提供一种简单而有效的统一的API路由管理方式。Spring Cloud Gateway作为Spring Cloud生态系中的网关，目标是替代Netflix ZUUL，其不仅提供统一的路由方式，并且基于Filter链的方式提供了网关基本的功能，例如：安全，监控/埋点，和限流等。</p>
+<p><strong>spring cloud gateway 案例</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;</span><br><span class="line">    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;</span><br><span class="line">    &lt;parent&gt;</span><br><span class="line">        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;2.0.5.RELEASE&lt;/version&gt;</span><br><span class="line">    &lt;/parent&gt;</span><br><span class="line"></span><br><span class="line">    &lt;groupId&gt;com.example&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;demo&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;</span><br><span class="line">    &lt;name&gt;demo&lt;/name&gt;</span><br><span class="line">    &lt;description&gt;Demo project for Spring Boot&lt;/description&gt;</span><br><span class="line"></span><br><span class="line">    &lt;dependencies&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;spring-cloud-starter-gateway&lt;/artifactId&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;</span><br><span class="line">            &lt;scope&gt;test&lt;/scope&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line">    &lt;/dependencies&gt;</span><br><span class="line"></span><br><span class="line">    &lt;dependencyManagement&gt;</span><br><span class="line">        &lt;dependencies&gt;</span><br><span class="line">            &lt;dependency&gt;</span><br><span class="line">                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;</span><br><span class="line">                &lt;version&gt;Finchley.SR1&lt;/version&gt;</span><br><span class="line">                &lt;type&gt;pom&lt;/type&gt;</span><br><span class="line">                &lt;scope&gt;import&lt;/scope&gt;</span><br><span class="line">            &lt;/dependency&gt;</span><br><span class="line">        &lt;/dependencies&gt;</span><br><span class="line">    &lt;/dependencyManagement&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &lt;build&gt;</span><br><span class="line">        &lt;plugins&gt;</span><br><span class="line">            &lt;plugin&gt;</span><br><span class="line">                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">            &lt;/plugin&gt;</span><br><span class="line">        &lt;/plugins&gt;</span><br><span class="line">    &lt;/build&gt;</span><br><span class="line"></span><br><span class="line">&lt;/project&gt;</span><br></pre></td></tr></table></figure>
+
+<p>新的gateway网关路由配置有两种方式：</p>
+<p>1.通过@Bean自定义RouteLocator，在启动主类Application中配置</p>
+<p>2.在配置文件yml中配置</p>
+<p>这两种方式都可以实现网关路由是等价的，但是通常项目开发中会使用配置文件yml方式。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  cloud:</span><br><span class="line">    gateway:</span><br><span class="line">      routes:</span><br><span class="line">      - id: 163_route</span><br><span class="line">        uri: http://localhost:8080/test/hello</span><br><span class="line">        predicates:</span><br><span class="line">        - Path=/get</span><br></pre></td></tr></table></figure>
+
+<p><strong>Spring Cloud Gateway内置了许多Predict</strong><br><img src="/img/48.png" alt="如图">  </p>
+<p><strong>After Route Predicate Factory</strong><br>可配置一个时间，当请求的时间在配置时间之后，才交给 router去处理。否则则报错，不通过路由.  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  cloud:</span><br><span class="line">    gateway:</span><br><span class="line">      routes:</span><br><span class="line">      - id: after_route</span><br><span class="line">        uri: http://example.org</span><br><span class="line">        predicates:</span><br><span class="line">        - After=2017-01-20T17:42:47.789-07:00[America/Denver]</span><br></pre></td></tr></table></figure>
+
+<p><strong>Before Route Predicate Factory</strong><br>此谓词匹配在当前日期时间之前发生的请求。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  cloud:</span><br><span class="line">    gateway:</span><br><span class="line">      routes:</span><br><span class="line">      - id: before_route</span><br><span class="line">        uri: http://example.org</span><br><span class="line">        predicates:</span><br><span class="line">        - Before=2017-01-20T17:42:47.789-07:00[America/Denver]</span><br></pre></td></tr></table></figure>
+
+<p><strong>Between Route Predicate Factory</strong><br>此谓词匹配datetime1之后和datetime2之前发生的请求。 datetime2参数必须在datetime1之后。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  cloud:</span><br><span class="line">    gateway:</span><br><span class="line">      routes:</span><br><span class="line">      - id: between_route</span><br><span class="line">        uri: http://example.org</span><br><span class="line">        predicates:</span><br><span class="line">        - Between=2017-01-20T17:42:47.789-07:00[America/Denver], 2017-01-21T17:42:47.789-07:00[America/Denver]</span><br></pre></td></tr></table></figure>
+
+<p><strong>Cookie Route Predicate Factory</strong><br>Cookie Route Predicate Factory有两个参数，cookie名称和正则表达式。此谓词匹配具有给定名称且值与正则表达式匹配的cookie。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  cloud:</span><br><span class="line">    gateway:</span><br><span class="line">      routes:</span><br><span class="line">      - id: cookie_route</span><br><span class="line">        uri: http://example.org</span><br><span class="line">        predicates:</span><br><span class="line">        - Cookie=chocolate, ch.p</span><br></pre></td></tr></table></figure>
+
+<p><strong>Header Route Predicate Factory</strong><br>Header Route Predicate Factory有两个参数，标题名称和正则表达式。此谓词与具有给定名称且值与正则表达式匹配的标头匹配。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  cloud:</span><br><span class="line">    gateway:</span><br><span class="line">      routes:</span><br><span class="line">      - id: header_route</span><br><span class="line">        uri: http://example.org</span><br><span class="line">        predicates:</span><br><span class="line">        - Header=X-Request-Id, \d+</span><br></pre></td></tr></table></figure>
+
+<p><strong>Host Route Predicate Factory</strong><br>Host Route Predicate Factory采用一个参数：主机名模式。该模式是一种Ant样式模式“.”作为分隔符。此谓词匹配与模式匹配的Host标头。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  cloud:</span><br><span class="line">    gateway:</span><br><span class="line">      routes:</span><br><span class="line">      - id: host_route</span><br><span class="line">        uri: http://example.org</span><br><span class="line">        predicates:</span><br><span class="line">        - Host=**.somehost.org</span><br></pre></td></tr></table></figure>
+
+<p><strong>Method Route Predicate Factory</strong><br>Method Route Predicate Factory采用一个参数：要匹配的HTTP方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  cloud:</span><br><span class="line">    gateway:</span><br><span class="line">      routes:</span><br><span class="line">      - id: method_route</span><br><span class="line">        uri: http://example.org</span><br><span class="line">        predicates:</span><br><span class="line">        - Method=GET</span><br></pre></td></tr></table></figure>
+
+<p><strong>Path Route Predicate Factory</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  cloud:</span><br><span class="line">    gateway:</span><br><span class="line">      routes:</span><br><span class="line">      - id: host_route</span><br><span class="line">        uri: http://example.org</span><br><span class="line">        predicates:</span><br><span class="line">        - Path=/foo/&#123;segment&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Query Route Predicate Factory</strong><br>Query Route Predicate Factory有两个参数：一个必需的参数和一个可选的正则表达式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  cloud:</span><br><span class="line">    gateway:</span><br><span class="line">      routes:</span><br><span class="line">      - id: query_route</span><br><span class="line">        uri: http://example.org</span><br><span class="line">        predicates:</span><br><span class="line">        - Query=baz</span><br></pre></td></tr></table></figure>
+
+<p><strong>RemoteAddr Route Predicate Factory</strong><br>RemoteAddr Route Predicate Factory采用CIDR符号（IPv4或IPv6）字符串的列表（最小值为1），例如， 192.168.0.1/16（其中192.168.0.1是IP地址，16是子网掩码）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  cloud:</span><br><span class="line">    gateway:</span><br><span class="line">      routes:</span><br><span class="line">      - id: remoteaddr_route</span><br><span class="line">        uri: http://example.org</span><br><span class="line">        predicates:</span><br><span class="line">        - RemoteAddr=192.168.1.1/24</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><strong>spring cloud gateway之filter</strong><br>Spring Cloud Gateway 的 Filter 的生命周期有两个：“pre” 和 “post”。<br><img src="/img/49.png" alt="如图"><br><strong>Spring-Cloud-Gateway的过滤器接口分为两种</strong>：</p>
+<ol>
+<li>GlobalFilter : 全局过滤器，不需要在配置文件中配置，作用在所有的路由上，最终通过GatewayFilterAdapter包装成GatewayFilterChain可识别的过滤器</li>
+<li>GatewayFilter : 需要通过spring.cloud.routes.filters 配置在具体路由下，只作用在当前路由上或通过spring.cloud.default-filters配置在全局，作用在所有路由上<br><img src="/img/50.png" alt="如图"> </li>
+</ol>
+<p><strong>AddRequestHeader</strong><br>在转发的请求头里面加key,value</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  cloud:</span><br><span class="line">    gateway:</span><br><span class="line">      routes:</span><br><span class="line">      - id: after_route</span><br><span class="line">        uri: http://localhost:8080/test/hello</span><br><span class="line">        filters:</span><br><span class="line">        - AddRequestHeader=X-Request-Foo, Bar</span><br><span class="line">        predicates:</span><br><span class="line">        - Path=/get</span><br></pre></td></tr></table></figure>
+
+<p><strong>RemoveRequestHeader</strong><br>移除请求头</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">filters:</span><br><span class="line">        - RemoveRequestHeader=X-Request-Foo</span><br></pre></td></tr></table></figure>
+
+<p><strong>AddRequestParameter</strong><br>请求参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">filters:</span><br><span class="line">        - AddRequestParameter=foo, bar</span><br></pre></td></tr></table></figure>
+
+<p><strong>AddResponseHeader</strong><br>添加响应头</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">filters:</span><br><span class="line">       - AddResponseHeader=X-Response-Foo, Bar</span><br></pre></td></tr></table></figure>
+
+<p><strong>RemoveResponseHeader</strong><br>移除响应头</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">filters:</span><br><span class="line">        - RemoveResponseHeader=X-Response-Foo</span><br></pre></td></tr></table></figure>
+
+<p><strong>SetResponseHeader</strong><br>设置响应头</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">filters:</span><br><span class="line">        - SetResponseHeader=X-Response-Foo, Bar</span><br></pre></td></tr></table></figure>
+
+<p><strong>PrefixPath</strong><br>路径前缀</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">filters:</span><br><span class="line">        - PrefixPath=/mypath</span><br></pre></td></tr></table></figure>
+
+<p><strong>RedirectTo</strong><br>重定向</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">filters:</span><br><span class="line">        - RedirectTo=302, http://acme.org</span><br></pre></td></tr></table></figure>
+
+<p><strong>RewritePath</strong><br>重写路径</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">predicates:</span><br><span class="line">        - Path=/foo/**</span><br><span class="line">        filters:</span><br><span class="line">        - RewritePath=/foo/(?&lt;segment&gt;.*), /$\&#123;segment&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>SaveSession</strong><br>保存Session</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">filters:</span><br><span class="line">        - SaveSession</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><strong>自定义局部过滤器</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.filter;</span><br><span class="line"></span><br><span class="line">import org.apache.commons.logging.Log;</span><br><span class="line">import org.apache.commons.logging.LogFactory;</span><br><span class="line">import org.springframework.cloud.gateway.filter.GatewayFilter;</span><br><span class="line">import org.springframework.cloud.gateway.filter.GatewayFilterChain;</span><br><span class="line">import org.springframework.core.Ordered;</span><br><span class="line">import org.springframework.web.server.ServerWebExchange;</span><br><span class="line">import reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @ClassName MyFilter</span><br><span class="line"> * @Description TODO</span><br><span class="line"> * @Author 王炎</span><br><span class="line"> * @Date 2019/9/30 16:33</span><br><span class="line"> * @ModifyDate 2019/9/30 16:33</span><br><span class="line"> * @Version 1.0</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">public class MyFilter implements GatewayFilter, Ordered &#123;</span><br><span class="line">    private static final Log log = LogFactory.getLog(GatewayFilter.class);</span><br><span class="line">    private static final String ELAPSED_TIME_BEGIN = &quot;state_time&quot;;</span><br><span class="line">    @Override</span><br><span class="line">    public Mono&lt;Void&gt; filter(ServerWebExchange exchange, GatewayFilterChain chain) &#123;</span><br><span class="line">        exchange.getAttributes().put(ELAPSED_TIME_BEGIN,System.currentTimeMillis());</span><br><span class="line">        return chain.filter(exchange).then(</span><br><span class="line">                Mono.fromRunnable(()-&gt;&#123;</span><br><span class="line">                    Long startTime=exchange.getAttribute(ELAPSED_TIME_BEGIN);</span><br><span class="line">                    if(startTime!=null)&#123;</span><br><span class="line">                          log.info(exchange.getRequest().getURI().getRawPath() + &quot;: &quot; + (System.currentTimeMillis() - startTime) + &quot;ms&quot;);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;)</span><br><span class="line">        );</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public int getOrder() &#123;</span><br><span class="line">        return Ordered.LOWEST_PRECEDENCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">@Bean</span><br><span class="line">	public RouteLocator customerRouteLocator(RouteLocatorBuilder builder) &#123;</span><br><span class="line">		return builder.routes()</span><br><span class="line">				.route(r -&gt; r.path(&quot;/get/**&quot;)</span><br><span class="line">						.filters(f -&gt; f.stripPrefix(2)</span><br><span class="line">								.filter(new MyFilter())</span><br><span class="line">								.addResponseHeader(&quot;X-Response-Default-Foo&quot;, &quot;Default-Bar&quot;))</span><br><span class="line">						.uri(&quot;http://localhost:8080/test/hello&quot;)</span><br><span class="line">						.order(0)</span><br><span class="line">						.id(&quot;fluent_customer_service&quot;)</span><br><span class="line">				)</span><br><span class="line">				.build();</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>全局过滤器</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.filter;</span><br><span class="line"></span><br><span class="line">import org.springframework.cloud.gateway.filter.GatewayFilterChain;</span><br><span class="line">import org.springframework.cloud.gateway.filter.GlobalFilter;</span><br><span class="line">import org.springframework.core.Ordered;</span><br><span class="line">import org.springframework.http.HttpStatus;</span><br><span class="line">import org.springframework.stereotype.Component;</span><br><span class="line">import org.springframework.web.server.ServerWebExchange;</span><br><span class="line">import reactor.core.publisher.Mono;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @ClassName TokenFilter</span><br><span class="line"> * @Description TODO</span><br><span class="line"> * @Author 王炎</span><br><span class="line"> * @Date 2019/9/30 16:53</span><br><span class="line"> * @ModifyDate 2019/9/30 16:53</span><br><span class="line"> * @Version 1.0</span><br><span class="line"> */</span><br><span class="line">@Component</span><br><span class="line">public class TokenFilter implements GlobalFilter, Ordered &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public Mono&lt;Void&gt; filter(ServerWebExchange exchange, GatewayFilterChain chain) &#123;</span><br><span class="line">        String token = exchange.getRequest().getQueryParams().getFirst(&quot;token&quot;);</span><br><span class="line">        if (token == null || token.isEmpty()) &#123;</span><br><span class="line">            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);</span><br><span class="line">            return exchange.getResponse().setComplete();</span><br><span class="line">        &#125;</span><br><span class="line">        return chain.filter(exchange);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public int getOrder() &#123;</span><br><span class="line">        return -100;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>服务降级</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">hystrix.command.fallbackcmd.execution.isolation.thread.timeoutInMilliseconds: 5000</span><br><span class="line">spring:</span><br><span class="line">  cloud:</span><br><span class="line">    gateway:</span><br><span class="line">      discovery:</span><br><span class="line">        locator:</span><br><span class="line">          enabled: true</span><br><span class="line">      routes:</span><br><span class="line">      - id: employee-service</span><br><span class="line">        uri: http://localhost:8080/test/hello</span><br><span class="line">        predicates:</span><br><span class="line">        - Path=/get/**</span><br><span class="line">        filters:</span><br><span class="line">        - name: Hystrix</span><br><span class="line">          args:</span><br><span class="line">            name: fallbackcmd</span><br><span class="line">            fallbackUri: forward:/fallback</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">package com.example.demo.filter;</span><br><span class="line"></span><br><span class="line">import org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line">import org.springframework.web.bind.annotation.RestController;</span><br><span class="line"></span><br><span class="line">import java.util.HashMap;</span><br><span class="line">import java.util.Map;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @ClassName DefaultHystrixController</span><br><span class="line"> * @Description TODO</span><br><span class="line"> * @Author 王炎</span><br><span class="line"> * @Date 2019/9/30 17:30</span><br><span class="line"> * @ModifyDate 2019/9/30 17:30</span><br><span class="line"> * @Version 1.0</span><br><span class="line"> */</span><br><span class="line">@RestController</span><br><span class="line">public class DefaultHystrixController &#123;</span><br><span class="line">    @RequestMapping(&quot;/fallback&quot;)</span><br><span class="line">    public Map&lt;String,String&gt; defaultfallback()&#123;</span><br><span class="line">        System.err.println(&quot;服务降级中&quot;);</span><br><span class="line">        Map&lt;String,String&gt; map = new HashMap&lt;&gt;();</span><br><span class="line">        map.put(&quot;resultCode&quot;,&quot;fail&quot;);</span><br><span class="line">        map.put(&quot;resultMessage&quot;,&quot;服务异常&quot;);</span><br><span class="line">        map.put(&quot;resultObj&quot;,&quot;null&quot;);</span><br><span class="line">        return map;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+
+
+
+    <!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p class="copyright text-muted">
+          Theme By <a target="_blank" href="https://github.com/levblanc">Levblanc.</a>
+          Inspired By <a target="_blank" href="https://github.com/klugjo/hexo-theme-clean-blog">Clean Blog.</a>
+        <p class="copyright text-muted">
+          Powered By <a target="_blank" href="https://hexo.io/">Hexo.</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    <!-- After Footer Scripts -->
+<script src="/js/highlight.pack.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    var codeBlocks = Array.prototype.slice.call(document.getElementsByTagName('pre'))
+    codeBlocks.forEach(function(block, index) {
+      hljs.highlightBlock(block);
+    });
+  });
+</script>
+
+  </body>
+</html>
+
