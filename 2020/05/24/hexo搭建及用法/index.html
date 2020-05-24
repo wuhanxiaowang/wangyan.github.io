@@ -8,7 +8,7 @@
   <meta name="description" content>
   <meta name="author" content="Mr Wang">
   <!-- Open Graph Data -->
-  <meta property="og:title" content="elasticsearch入门">
+  <meta property="og:title" content="hexo搭建及用法">
   <meta property="og:description" content>
   <meta property="og:site_name" content="春风不及你的美🐷">
   <meta property="og:type" content="article">
@@ -43,7 +43,7 @@
     <div class="row">
       <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
         <div class="page-title with-background-image">
-          <p class="title">elasticsearch入门</p>
+          <p class="title">hexo搭建及用法</p>
           <p class="subtitle"></p>
         </div>
         <div class="site-menu with-background-image">
@@ -99,7 +99,7 @@
           
           <!-- Date -->
           <span class="date-time info">On
-            <span class="date">2019-08-14</span>
+            <span class="date">2020-05-24</span>
             <span class="time">17:10:00</span>
           </span>
           
@@ -108,7 +108,35 @@
         
         <!-- Post Main Content -->
         <div class="post-content">
-          
+          <p>1.安装git</p>
+<p>2.安装npm</p>
+<h1 id="3-安装hexo"><a href="#3-安装hexo" class="headerlink" title="3.安装hexo"></a>3.安装hexo</h1><p>  (1)新建一个文件夹hexo,然后cd到文件夹下输入命令 </p>
+<pre><code>npm install -g hexo-cli</code></pre><p>   用hexo -v 查看一下版本<br>  (2)接下来初始化hexo  </p>
+<pre><code>hexo init </code></pre><p>  (3)最后安装  </p>
+<pre><code>npm install</code></pre><p>新建完成后,指定文件夹目录有:  </p>
+<ul>
+<li>node_modules: 依赖包  </li>
+<li>public：存放生成的页面  </li>
+<li>scaffolds：生成文章的一些模板  </li>
+<li>source：用来存放你的文章  </li>
+<li>themes：主题  </li>
+<li>** _config.yml: 博客的配置文件**  </li>
+</ul>
+<h2 id="hexo几个常用命令"><a href="#hexo几个常用命令" class="headerlink" title="hexo几个常用命令"></a>hexo几个常用命令</h2><pre><code>hexo clean 清理之前生成的东西 
+hexo new   新建文章 
+hexo g     生成静态文章
+hexo d     文章部署到git
+hexo s     启动</code></pre><hr>
+<p>4.GitHub创建个人仓库<br>创建一个和你用户名相同的仓库，后面加.github.io，只有这样，将来要部署到GitHub page的时候，才会被识别，也就是xxxx.github.io，其中xxx就是你注册GitHub的用户名。<br>5.生成SSH添加到GitHub<br>回到你的git bash中,输入  </p>
+<pre><code>git config --global user.name &quot;yourname&quot;  
+git config --global user.email &quot;youremail&quot;  </code></pre><p>这里的yourname输入你的GitHub用户名，youremail输入你GitHub的邮箱。这样GitHub才能知道你是不是对应它的账户。<br>然后创建SSH,一路回车  </p>
+<pre><code>ssh-keygen -t rsa -C &quot;youremail&quot;</code></pre><p>这个时候它会告诉你已经生成了.ssh的文件夹。在你的电脑中找到这个文件夹。<br>ssh，简单来讲，就是一个秘钥，其中，id_rsa是你这台电脑的私人秘钥，不能给别人看的，id_rsa.pub是公共秘钥，可以随便给别人看。把这个公钥放在GitHub上，这样当你链接GitHub自己的账户时，它就会根据公钥匹配你的私钥，当能够相互匹配时，才能够顺利的通过git上传你的文件到GitHub上。<br>而后在GitHub的setting中，找到SSH keys的设置选项，点击New SSH key<br>把你的id_rsa.pub里面的信息复制进去。<br>在gitbash中，查看是否成功</p>
+<pre><code>ssh -T git@github.com</code></pre><p>6.将hexo部署到GitHub<br>这一步，我们就可以将hexo和GitHub关联起来，也就是将hexo生成的文章部署到GitHub上，打开站点配置文件 _config.yml，翻到最后，修改为<br>YourgithubName就是你的GitHub账户  </p>
+<pre><code>deploy:
+  type: git
+  repo: git@github.com:wuhanxiaowang/wuhanxiaowang.github.io.git
+  branch: master</code></pre><p>这个时候需要先安装deploy-git ，也就是部署的命令,这样你才能用命令部署到GitHub。 </p>
+<pre><code>npm install hexo-deployer-git --save</code></pre>
         </div>
       </div>
     </div>
